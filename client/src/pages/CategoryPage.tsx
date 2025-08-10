@@ -10,21 +10,17 @@ import { ChevronRight, Filter, Grid, List } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const categorySubcategories: Record<string, string[]> = {
-  necklaces: ["Chain Necklaces", "Pendant Sets", "Chokers", "Long Chains"],
-  haras: ["Kundan Haras", "Temple Haras", "Polki Haras", "Antique Haras"],
-  mangalsutra: ["Andhra Style", "Maharashtrian Style", "Rajasthani Style", "Modern Style"],
-  rings: ["Wedding Rings", "Engagement Rings", "Daily Wear", "Statement Rings"],
-  earrings: ["Jhumkas", "Chandbali", "Studs", "Hoops", "Chandelier"],
-  silver: ["Silver Plates", "Deepak/Diyas", "Glasses", "God Structures", "Gift Sets"],
+  "patta-poth": ["long", "short"],
+  "necklace": ["temple-22k", "fancy-22k", "classic-22k", "fancy-20k", "classic-20k", "arbi-20k"],
+  "fancy-poth": ["with-pendant", "cartier", "nano", "short", "long"],
+  "choker": ["temple", "yellow"],
 };
 
 const categoryNames: Record<string, string> = {
-  necklaces: "Necklaces",
-  haras: "Haras",
-  mangalsutra: "Mangalsutra",
-  rings: "Rings", 
-  earrings: "Earrings",
-  silver: "Silver Items",
+  "patta-poth": "Patta Poth 22K",
+  "necklace": "Necklaces",
+  "fancy-poth": "Fancy Poth 22K",
+  "choker": "Chokers 22K",
 };
 
 export default function CategoryPage() {
