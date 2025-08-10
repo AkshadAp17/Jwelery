@@ -334,8 +334,17 @@ export class MemStorage implements IStorage {
   }
 
   async importCatalogProducts(products: InsertProduct[]): Promise<Product[]> {
+    const existingProducts = Array.from(this.products.values());
     const createdProducts: Product[] = [];
+    
     for (const product of products) {
+      // Skip if product already exists (check by name)
+      const exists = existingProducts.some(p => p.name === product.name);
+      if (exists) {
+        console.log(`Product ${product.name} already exists, skipping...`);
+        continue;
+      }
+      
       const createdProduct = await this.createProduct(product);
       createdProducts.push(createdProduct);
     }
