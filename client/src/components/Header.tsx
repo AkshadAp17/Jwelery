@@ -19,41 +19,41 @@ export default function Header() {
   const { t } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
 
-  // Complete collections from authentic Mamdej Jewellers catalog
+  // Simplified collections menu
   const collections = [
     {
-      name: "Patta Poth Collection",
+      name: "Patta Poth",
       items: [
-        { name: "Long Poth 22K", path: "/category/patta-poth/long", count: "2 Designs" },
-        { name: "Short Poth 22K", path: "/category/patta-poth/short", count: "1 Design" }
+        { name: "Long", path: "/category/patta-poth/long" },
+        { name: "Short", path: "/category/patta-poth/short" }
       ]
     },
     {
-      name: "Necklace Collection", 
+      name: "Necklaces", 
       items: [
-        { name: "Fancy 20K Gold", path: "/category/necklace/fancy-20k", count: "2 Designs" },
-        { name: "Temple 22K Gold", path: "/category/necklace/temple-22k", count: "1 Design" },
-        { name: "Fancy 22K Gold", path: "/category/necklace/fancy-22k", count: "1 Design" },
-        { name: "Classic 20K Gold", path: "/category/necklace/classic-20k", count: "1 Design" },
-        { name: "Classic 22K Gold", path: "/category/necklace/classic-22k", count: "1 Design" },
-        { name: "Arbi 20K Gold", path: "/category/necklace/arbi-20k", count: "1 Design" }
+        { name: "Fancy 20K", path: "/category/necklace/fancy-20k" },
+        { name: "Temple 22K", path: "/category/necklace/temple-22k" },
+        { name: "Fancy 22K", path: "/category/necklace/fancy-22k" },
+        { name: "Classic 20K", path: "/category/necklace/classic-20k" },
+        { name: "Classic 22K", path: "/category/necklace/classic-22k" },
+        { name: "Arbi 20K", path: "/category/necklace/arbi-20k" }
       ]
     },
     {
-      name: "Fancy Poth Collection",
+      name: "Fancy Poth",
       items: [
-        { name: "With Pendant", path: "/category/fancy-poth/with-pendant", count: "1 Design" },
-        { name: "Cartier Style", path: "/category/fancy-poth/cartier", count: "1 Design" },
-        { name: "Nano Poth", path: "/category/fancy-poth/nano", count: "1 Design" },
-        { name: "Short Poth", path: "/category/fancy-poth/short", count: "1 Design" },
-        { name: "Long Poth", path: "/category/fancy-poth/long", count: "1 Design" }
+        { name: "With Pendant", path: "/category/fancy-poth/with-pendant" },
+        { name: "Cartier", path: "/category/fancy-poth/cartier" },
+        { name: "Nano", path: "/category/fancy-poth/nano" },
+        { name: "Short", path: "/category/fancy-poth/short" },
+        { name: "Long", path: "/category/fancy-poth/long" }
       ]
     },
     {
-      name: "Choker Collection",
+      name: "Chokers",
       items: [
-        { name: "Temple Choker 22K", path: "/category/choker/temple", count: "1 Design" },
-        { name: "Yellow Choker", path: "/category/choker/yellow", count: "1 Design" }
+        { name: "Temple", path: "/category/choker/temple" },
+        { name: "Yellow", path: "/category/choker/yellow" }
       ]
     }
   ];
@@ -130,13 +130,12 @@ export default function Header() {
                         {collection.items.map((item) => (
                           <Link key={item.path} href={item.path}>
                             <button 
-                              className={`block w-full text-left px-2 py-1 text-xs text-gray-600 hover:bg-gold hover:text-white transition-colors rounded ${
+                              className={`block w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gold hover:text-white transition-colors rounded ${
                                 location === item.path ? "bg-gold text-white" : ""
                               }`}
                               onClick={() => setIsMenuOpen(false)}
                             >
-                              <span className="block">{item.name}</span>
-                              <span className="text-xs opacity-75">{item.count}</span>
+                              {item.name}
                             </button>
                           </Link>
                         ))}
@@ -246,13 +245,10 @@ export default function Header() {
                             <Link key={item.path} href={item.path}>
                               <Button 
                                 variant="ghost" 
-                                className="justify-start w-full pl-6 text-xs"
+                                className="justify-start w-full pl-6 text-sm"
                                 onClick={() => setIsMenuOpen(false)}
                               >
-                                <div>
-                                  <div>{item.name}</div>
-                                  <div className="text-xs text-gray-500">{item.count}</div>
-                                </div>
+                                {item.name}
                               </Button>
                             </Link>
                           ))}
