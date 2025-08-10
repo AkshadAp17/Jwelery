@@ -463,6 +463,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Comprehensive Mamde catalog import endpoint
+  app.post('/api/catalog/import-mamde', async (req, res) => {
+    try {
+      console.log('Mamde comprehensive catalog import started');
+      
+      const { catalogData } = req.body;
+      
+      if (!catalogData || typeof catalogData !== 'object') {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Invalid catalog data provided' 
+        });
+      }
+
+      const { mamdeCatalogImporter } = await import('./services/mamdeCatalogImporter');
+      
+      let totalAdded = 0;
+      let totalDuplicates = 0;
+      const importResults: any[] = [];
+
+      // Process each category
+      for (const [categoryKey, content] of Object.entries(catalogData)) {
+        console.log(`Processing category: ${categoryKey}`);
+        
+        try {
+          const mamdeProducts = mamdeCatalogImporter.extractProductsFromContent(content as string, categoryKey);
+          const products = mamdeCatalogImporter.convertToInsertProducts(mamdeProducts);
+          
+          console.log(`Extracted ${products.length} products from ${categoryKey}`);
+          
+          let categoryAdded = 0;
+          let categoryDuplicates = 0;
+          
+          for (const product of products) {
+            const existingProducts = await storage.getAll();
+            const exists = existingProducts.find(p => p.name === product.name);
+            if (!exists) {
+              await storage.create(product);
+              categoryAdded++;
+            } else {
+              categoryDuplicates++;
+            }
+          }
+          
+          totalAdded += categoryAdded;
+          totalDuplicates += categoryDuplicates;
+          
+          importResults.push({
+            category: categoryKey,
+            processed: products.length,
+            added: categoryAdded,
+            duplicates: categoryDuplicates
+          });
+          
+          console.log(`${categoryKey}: ${categoryAdded} added, ${categoryDuplicates} duplicates`);
+          
+        } catch (error) {
+          console.error(`Error processing category ${categoryKey}:`, error);
+          importResults.push({
+            category: categoryKey,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          });
+        }
+      }
+
+      console.log(`Total import completed: ${totalAdded} added, ${totalDuplicates} duplicates`);
+      
+      res.json({ 
+        success: true, 
+        message: `Successfully imported ${totalAdded} products from ${Object.keys(catalogData).length} categories`,
+        totalAdded,
+        totalDuplicates,
+        results: importResults
+      });
+      
+    } catch (error) {
+      console.error('Mamde catalog import error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to import Mamde catalog data',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
