@@ -8,6 +8,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Home from "@/pages/Home";
 import CategoryPage from "@/pages/CategoryPage";
 import ProductPage from "@/pages/ProductPage";
+import Products from "@/pages/Products";
+import AdminLogin from "@/pages/AdminLogin";
 import AdminDashboard from "@/pages/AdminDashboard";
 import NotFound from "@/pages/not-found";
 
@@ -19,7 +21,10 @@ function Router() {
       <Route path="/necklace" component={CategoryPage} />
       <Route path="/fancy-poth" component={CategoryPage} />
       <Route path="/choker" component={CategoryPage} />
-      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin" component={AdminLogin} />
+      <Route path="/admin/dashboard" component={AdminDashboard} />
+      <Route path="/products" component={Products} />
+      <Route path="/category/:category" component={CategoryPage} />
       <Route path="/product/:id" component={ProductPage} />
       <Route path="/:category" component={CategoryPage} />
       <Route component={NotFound} />

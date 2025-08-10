@@ -6,15 +6,63 @@ import { insertRateSchema } from "@shared/schema";
 import { ratesService } from "./ratesService";
 import { catalogScraper } from "./services/catalogScraper";
 import { z } from "zod";
-import authRoutes from "./routes/auth";
-import adminRoutes from "./routes/admin";
+import { insertProductSchema, loginSchema } from "@shared/schema";
+import jwt from "jsonwebtoken";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
-  app.use("/api/auth", authRoutes);
-  
-  // Admin routes
-  app.use("/api/admin", adminRoutes);
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const validatedData = loginSchema.parse(req.body);
+      const user = await storage.authenticateUser(validatedData.username, validatedData.password);
+      
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const token = jwt.sign(
+        { userId: user.id, username: user.username, role: user.role },
+        process.env.JWT_SECRET || "fallback-secret",
+        { expiresIn: "24h" }
+      );
+
+      res.json({ user: { id: user.id, username: user.username, role: user.role }, token });
+    } catch (error) {
+      res.status(400).json({ message: "Invalid request data" });
+    }
+  });
+
+  // Product management routes
+  app.post("/api/products", async (req, res) => {
+    try {
+      const validatedData = insertProductSchema.parse(req.body);
+      const product = await storage.createProduct(validatedData);
+      res.json(product);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to create product" });
+    }
+  });
+
+  app.put("/api/products/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const validatedData = insertProductSchema.partial().parse(req.body);
+      const product = await storage.updateProduct(id, validatedData);
+      res.json(product);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to update product" });
+    }
+  });
+
+  app.delete("/api/products/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteProduct(id);
+      res.json({ message: "Product deleted successfully" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to delete product" });
+    }
+  });
   // Products routes
   app.get("/api/products", async (req, res) => {
     try {
@@ -487,10 +535,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           let categoryDuplicates = 0;
           
           for (const product of products) {
-            const existingProducts = await storage.getAll();
+            const existingProducts = await storage.getProducts();
             const exists = existingProducts.find(p => p.name === product.name);
             if (!exists) {
-              await storage.create(product);
+              await storage.createProduct(product);
               categoryAdded++;
             } else {
               categoryDuplicates++;

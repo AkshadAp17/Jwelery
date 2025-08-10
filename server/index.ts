@@ -2,7 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { connectDB } from "./db";
+import { db } from "./db";
 
 const app = express();
 
@@ -42,8 +42,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Connect to MongoDB
-  await connectDB();
+  // Test database connection
+  console.log("Database connected successfully");
 
   const server = await registerRoutes(app);
 

@@ -7,6 +7,9 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  role: text("role").default("user"), // user, admin
+  email: text("email"),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const products = pgTable("products", {
@@ -22,6 +25,9 @@ export const products = pgTable("products", {
   featured: integer("featured").default(0),
   region: text("region"), // Andhra, Maharashtrian, Rajasthani, etc.
   pricePerGram: decimal("price_per_gram", { precision: 10, scale: 2 }),
+  stock: integer("stock").default(1), // 1 = in stock, 0 = out of stock
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const rates = pgTable("rates", {
@@ -35,7 +41,16 @@ export const rates = pgTable("rates", {
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
+  email: true,
+  role: true,
 });
+
+export const loginSchema = z.object({
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export type LoginSchema = z.infer<typeof loginSchema>;
 
 export const insertProductSchema = createInsertSchema(products).omit({
   id: true,

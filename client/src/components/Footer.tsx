@@ -2,12 +2,12 @@ import { Link } from "wouter";
 
 export default function Footer() {
   const collections = [
-    { name: "Necklaces", path: "/necklaces" },
-    { name: "Haras", path: "/haras" },
-    { name: "Mangalsutra", path: "/mangalsutra" },
-    { name: "Rings", path: "/rings" },
-    { name: "Earrings", path: "/earrings" },
-    { name: "Bracelets", path: "/bracelets" },
+    { name: "Patta Poth 22K", path: "/category/patta-poth", key: "patta-poth" },
+    { name: "Necklaces 20K", path: "/category/necklace?filter=20k", key: "necklace-20k" },
+    { name: "Necklaces 22K", path: "/category/necklace?filter=22k", key: "necklace-22k" },
+    { name: "Fancy Poth 22K", path: "/category/fancy-poth", key: "fancy-poth" },
+    { name: "Chokers 22K", path: "/category/choker", key: "choker" },
+    { name: "View All Products", path: "/products", key: "all-products" },
   ];
 
   return (
@@ -39,7 +39,7 @@ export default function Footer() {
             <h5 className="font-semibold text-lg mb-4">Collections</h5>
             <ul className="space-y-2">
               {collections.map((collection) => (
-                <li key={collection.path}>
+                <li key={collection.key}>
                   <Link href={collection.path}>
                     <button className="text-gray-300 hover:text-gold transition-colors text-left">
                       {collection.name}
@@ -53,24 +53,24 @@ export default function Footer() {
           <div>
             <h5 className="font-semibold text-lg mb-4">Services</h5>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Custom Jewelry</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Repair Services</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Jewelry Appraisal</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Gold Exchange</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Cleaning Services</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Consultation</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-tools mr-2"></i>Custom Jewelry</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-wrench mr-2"></i>Repair Services</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-certificate mr-2"></i>Jewelry Appraisal</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-exchange-alt mr-2"></i>Gold Exchange</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-sparkles mr-2"></i>Cleaning Services</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-comments mr-2"></i>Consultation</a></li>
             </ul>
           </div>
 
           <div>
             <h5 className="font-semibold text-lg mb-4">Quick Links</h5>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">About Us</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Contact Us</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Return Policy</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors">Warranty</a></li>
+              <li><a href="/admin" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-user-shield mr-2"></i>Admin Panel</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-info-circle mr-2"></i>About Us</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-phone mr-2"></i>Contact Us</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-shield-alt mr-2"></i>Privacy Policy</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-file-contract mr-2"></i>Terms of Service</a></li>
+              <li><a href="#" className="text-gray-300 hover:text-gold transition-colors flex items-center"><i className="fas fa-award mr-2"></i>Warranty</a></li>
             </ul>
           </div>
         </div>
@@ -86,6 +86,48 @@ export default function Footer() {
               <span className="bg-silver bg-opacity-20 px-3 py-1 rounded-full text-silver font-medium">GST Verified</span>
             </div>
           </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 mt-8">
+          <div className="text-center">
+            <h5 className="font-semibold text-lg mb-4 text-gold">Visit Our Store</h5>
+            <p className="text-gray-300 mb-2">
+              <i className="fas fa-map-marker-alt mr-2"></i>
+              123 Jewelry Street, Gold Market
+            </p>
+            <p className="text-gray-300 mb-2">
+              <i className="fas fa-phone mr-2"></i>
+              +91 98765 43210
+            </p>
+            <p className="text-gray-300">
+              <i className="fas fa-clock mr-2"></i>
+              Mon-Sat: 10 AM - 8 PM
+            </p>
+          </div>
+          
+          <div className="text-center">
+            <h5 className="font-semibold text-lg mb-4 text-gold">Book Appointment</h5>
+            <p className="text-gray-300 mb-4">Schedule a personal consultation with our jewelry experts</p>
+            <button className="gold-gradient text-white px-6 py-2 rounded-lg hover:scale-105 transition-transform">
+              <i className="fas fa-calendar-alt mr-2"></i>
+              Book Now
+            </button>
+          </div>
+          
+          <div className="text-center">
+            <h5 className="font-semibold text-lg mb-4 text-gold">Explore Collection</h5>
+            <p className="text-gray-300 mb-4">Browse our complete jewelry catalog with authentic Mamdej designs</p>
+            <Link href="/products">
+              <button className="border border-gold text-gold px-6 py-2 rounded-lg hover:bg-gold hover:text-white transition-colors">
+                <i className="fas fa-search mr-2"></i>
+                View Catalog
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-700 pt-6 mt-8 text-center text-gray-400">
+          <p>&copy; 2024 Shree Jewellers. All rights reserved. | Authentic Mamdej Jewellers Collection</p>
         </div>
       </div>
     </footer>

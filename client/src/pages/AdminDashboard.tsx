@@ -1,125 +1,92 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { insertProductSchema, type InsertProduct, type Product } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Upload, Image } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { CatalogImporter } from "@/components/CatalogImporter";
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  subcategory?: string;
-  material: 'gold' | 'silver';
-  weight: string;
-  purity: string;
-  region?: string;
-  images: string[];
-  featured: number;
-}
+import { Link, useLocation } from "wouter";
 
 export default function AdminDashboard() {
-  const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [selectedImages, setSelectedImages] = useState<FileList | null>(null);
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // Form state
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    category: '',
-    subcategory: '',
-    material: 'gold' as 'gold' | 'silver',
-    weight: '',
-    purity: '',
-    region: '',
-    featured: 0,
-  });
+  // Check admin authentication
+  const adminToken = localStorage.getItem("adminToken");
+  if (!adminToken) {
+    setLocation("/admin");
+    return null;
+  }
 
-  const categories = [
-    { value: 'necklaces', label: 'Necklaces', subcategories: ['Chain Necklaces', 'Pendant Sets', 'Chokers', 'Long Chains'] },
-    { value: 'haras', label: 'Haras', subcategories: ['Kundan Haras', 'Temple Haras', 'Polki Haras', 'Antique Haras'] },
-    { value: 'mangalsutra', label: 'Mangalsutra', subcategories: ['Andhra Style', 'Maharashtrian Style', 'Rajasthani Style', 'Modern Style'] },
-    { value: 'rings', label: 'Rings', subcategories: ['Wedding Rings', 'Engagement Rings', 'Daily Wear', 'Statement Rings'] },
-    { value: 'earrings', label: 'Earrings', subcategories: ['Jhumkas', 'Chandbali', 'Studs', 'Hoops', 'Chandelier'] },
-    { value: 'silver', label: 'Silver Items', subcategories: ['Silver Plates', 'Deepak/Diyas', 'Glasses', 'God Structures', 'Gift Sets'] },
-  ];
-
-  const selectedCategory = categories.find(c => c.value === form.category);
-
-  // Fetch all products for admin
   const { data: products = [], isLoading } = useQuery({
-    queryKey: ['/api/admin/products'],
+    queryKey: ["/api/products"],
   });
 
-  // Create product mutation
-  const createProductMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const response = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      });
-      if (!response.ok) throw new Error('Failed to create product');
-      return response.json();
+  const { data: rates = [] } = useQuery({
+    queryKey: ["/api/rates"],
+  });
+
+  const form = useForm<InsertProduct>({
+    resolver: zodResolver(insertProductSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      category: "",
+      subcategory: "",
+      weight: "0",
+      purity: "",
+      material: "gold",
+      imageUrl: "",
+      featured: 0,
+      pricePerGram: "6250.00",
+      stock: 1,
+    },
+  });
+
+  const addProductMutation = useMutation({
+    mutationFn: async (data: InsertProduct) => {
+      return await apiRequest("/api/products", "POST", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
-      setIsProductDialogOpen(false);
-      resetForm();
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({
-        title: "Product Created",
-        description: "Product has been successfully created.",
+        title: "Product added",
+        description: "Product has been successfully added to the catalog",
       });
+      setIsAddDialogOpen(false);
+      form.reset();
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to create product",
+        description: error.message || "Failed to add product",
         variant: "destructive",
       });
     },
   });
 
-  // Update product mutation
   const updateProductMutation = useMutation({
-    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
-      const response = await fetch(`/api/admin/products/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      });
-      if (!response.ok) throw new Error('Failed to update product');
-      return response.json();
+    mutationFn: async ({ id, data }: { id: string; data: Partial<InsertProduct> }) => {
+      return await apiRequest(`/api/products/${id}`, "PUT", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
-      setIsProductDialogOpen(false);
-      setEditingProduct(null);
-      resetForm();
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({
-        title: "Product Updated",
-        description: "Product has been successfully updated.",
+        title: "Product updated",
+        description: "Product has been successfully updated",
       });
+      setEditingProduct(null);
     },
     onError: (error: any) => {
       toast({
@@ -130,17 +97,15 @@ export default function AdminDashboard() {
     },
   });
 
-  // Delete product mutation
   const deleteProductMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiRequest(`/api/admin/products/${id}`, { method: 'DELETE' });
+      return await apiRequest(`/api/products/${id}`, "DELETE");
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/products'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       toast({
-        title: "Product Deleted",
-        description: "Product has been successfully deleted.",
+        title: "Product deleted",
+        description: "Product has been successfully removed",
       });
     },
     onError: (error: any) => {
@@ -152,355 +117,542 @@ export default function AdminDashboard() {
     },
   });
 
-  const resetForm = () => {
-    setForm({
-      name: '',
-      description: '',
-      category: '',
-      subcategory: '',
-      material: 'gold',
-      weight: '',
-      purity: '',
-      region: '',
-      featured: 0,
-    });
-    setSelectedImages(null);
+  const onSubmit = (data: InsertProduct) => {
+    if (editingProduct) {
+      updateProductMutation.mutate({ id: editingProduct.id, data });
+    } else {
+      addProductMutation.mutate(data);
+    }
   };
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
-    setForm({
+    form.reset({
       name: product.name,
       description: product.description,
       category: product.category,
-      subcategory: product.subcategory || '',
-      material: product.material,
+      subcategory: product.subcategory || "",
       weight: product.weight,
       purity: product.purity,
-      region: product.region || '',
-      featured: product.featured,
+      material: product.material,
+      imageUrl: product.imageUrl,
+      featured: product.featured || 0,
+      pricePerGram: product.pricePerGram || "6250.00",
+      stock: product.stock || 1,
     });
-    setIsProductDialogOpen(true);
+    setIsAddDialogOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) => {
-      formData.append(key, String(value));
-    });
-
-    if (selectedImages) {
-      Array.from(selectedImages).forEach((file) => {
-        formData.append('images', file);
-      });
-    }
-
-    if (editingProduct) {
-      updateProductMutation.mutate({ id: editingProduct.id, formData });
-    } else {
-      createProductMutation.mutate(formData);
+  const handleDelete = (product: Product) => {
+    if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
+      deleteProductMutation.mutate(product.id);
     }
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      deleteProductMutation.mutate(id);
-    }
+  const logout = () => {
+    localStorage.removeItem("adminToken");
+    setLocation("/admin");
   };
+
+  const categories = [
+    { value: "patta-poth", label: "Patta Poth 22K" },
+    { value: "necklace", label: "Necklaces" },
+    { value: "fancy-poth", label: "Fancy Poth 22K" },
+    { value: "choker", label: "Chokers 22K" },
+  ];
+
+  const subcategories: Record<string, string[]> = {
+    "patta-poth": ["long", "short"],
+    "necklace": ["temple-22k", "fancy-22k", "classic-22k", "fancy-20k", "classic-20k", "arbi-20k"],
+    "fancy-poth": ["with-pendant", "cartier", "nano", "short", "long"],
+    "choker": ["temple", "yellow"],
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <div className="text-center">
+          <i className="fas fa-spinner fa-spin text-4xl text-gold mb-4"></i>
+          <p className="text-lg">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cream">
-      <Header />
-      
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="font-playfair text-4xl font-bold text-navy">Admin Dashboard</h1>
-          <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gold-gradient text-white" onClick={() => {
-                setEditingProduct(null);
-                resetForm();
-              }}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Product
+      <div className="bg-navy text-white p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-playfair font-bold">
+              <i className="fas fa-user-shield mr-2"></i>
+              Admin Dashboard
+            </h1>
+            <span className="text-gold">Shree Jewellers</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link href="/">
+              <Button variant="outline">
+                <i className="fas fa-home mr-2"></i>
+                View Website
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingProduct ? 'Edit Product' : 'Add New Product'}
-                </DialogTitle>
-              </DialogHeader>
-              
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="name">Product Name</Label>
-                    <Input
-                      id="name"
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="category">Category</Label>
-                    <Select value={form.category} onValueChange={(value) => setForm({ ...form, category: value, subcategory: '' })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat.value} value={cat.value}>
-                            {cat.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {selectedCategory && (
-                  <div>
-                    <Label htmlFor="subcategory">Subcategory</Label>
-                    <Select value={form.subcategory} onValueChange={(value) => setForm({ ...form, subcategory: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select subcategory" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {selectedCategory.subcategories.map((sub) => (
-                          <SelectItem key={sub} value={sub}>
-                            {sub}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="material">Material</Label>
-                    <Select value={form.material} onValueChange={(value: 'gold' | 'silver') => setForm({ ...form, material: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="gold">Gold</SelectItem>
-                        <SelectItem value="silver">Silver</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="weight">Weight (grams)</Label>
-                    <Input
-                      id="weight"
-                      value={form.weight}
-                      onChange={(e) => setForm({ ...form, weight: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="purity">Purity</Label>
-                    <Input
-                      id="purity"
-                      value={form.purity}
-                      onChange={(e) => setForm({ ...form, purity: e.target.value })}
-                      placeholder="e.g., 22K, 18K"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="region">Region (optional)</Label>
-                    <Input
-                      id="region"
-                      value={form.region}
-                      onChange={(e) => setForm({ ...form, region: e.target.value })}
-                      placeholder="e.g., Andhra, Maharashtrian"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="featured">Featured</Label>
-                    <Select value={String(form.featured)} onValueChange={(value) => setForm({ ...form, featured: parseInt(value) })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="0">No</SelectItem>
-                        <SelectItem value="1">Yes</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="images">Product Images</Label>
-                  <Input
-                    id="images"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => setSelectedImages(e.target.files)}
-                    className="cursor-pointer"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">
-                    Select multiple images. They will be uploaded to Cloudinary.
-                  </p>
-                </div>
-
-                <div className="flex justify-end space-x-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsProductDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    className="gold-gradient text-white"
-                    disabled={createProductMutation.isPending || updateProductMutation.isPending}
-                  >
-                    {createProductMutation.isPending || updateProductMutation.isPending 
-                      ? 'Saving...' 
-                      : editingProduct ? 'Update Product' : 'Create Product'
-                    }
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+            </Link>
+            <Button onClick={logout} variant="destructive">
+              <i className="fas fa-sign-out-alt mr-2"></i>
+              Logout
+            </Button>
+          </div>
         </div>
+      </div>
 
+      <div className="container mx-auto p-6">
         <Tabs defaultValue="products" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="products">Products</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="products">
+              <i className="fas fa-gem mr-2"></i>
+              Products ({products.length})
+            </TabsTrigger>
+            <TabsTrigger value="rates">
+              <i className="fas fa-chart-line mr-2"></i>
+              Gold/Silver Rates
+            </TabsTrigger>
+            <TabsTrigger value="analytics">
+              <i className="fas fa-analytics mr-2"></i>
+              Analytics
+            </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="products" className="space-y-4">
-            {isLoading ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product: Product) => (
-                  <Card key={product.id} className="overflow-hidden">
-                    <div className="relative h-48 bg-gray-100">
-                      {product.images && product.images[0] ? (
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
+
+          <TabsContent value="products" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold">Product Management</h2>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="gold-gradient text-white">
+                    <i className="fas fa-plus mr-2"></i>
+                    Add New Product
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {editingProduct ? "Edit Product" : "Add New Product"}
+                    </DialogTitle>
+                    <DialogDescription>
+                      {editingProduct ? "Update product details" : "Add a new jewelry item to your catalog"}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Product Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Elegant Necklace 22K" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                      ) : (
-                        <div className="flex items-center justify-center h-full">
-                          <Image className="w-12 h-12 text-gray-400" />
-                        </div>
-                      )}
-                      {product.featured === 1 && (
-                        <div className="absolute top-2 left-2">
-                          <span className="bg-gold text-white px-2 py-1 rounded text-xs font-medium">
+                        <FormField
+                          control={form.control}
+                          name="weight"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Weight (grams)</FormLabel>
+                              <FormControl>
+                                <Input type="number" step="0.01" placeholder="25.50" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder="Beautiful traditional design with intricate craftsmanship..."
+                                rows={3}
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="category"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Category</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select category" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {categories.map((cat) => (
+                                    <SelectItem key={cat.value} value={cat.value}>
+                                      {cat.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="subcategory"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Subcategory</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select subcategory" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {form.watch("category") && subcategories[form.watch("category")]?.map((sub) => (
+                                    <SelectItem key={sub} value={sub}>
+                                      {sub}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="purity"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Purity</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select purity" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="22K Gold">22K Gold</SelectItem>
+                                  <SelectItem value="20K Gold">20K Gold</SelectItem>
+                                  <SelectItem value="18K Gold">18K Gold</SelectItem>
+                                  <SelectItem value="925 Silver">925 Silver</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="material"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Material</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select material" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="gold">Gold</SelectItem>
+                                  <SelectItem value="silver">Silver</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="pricePerGram"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Price per Gram (₹)</FormLabel>
+                              <FormControl>
+                                <Input type="number" step="0.01" placeholder="6250.00" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={form.control}
+                        name="imageUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Image URL</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="https://cdn.quicksell.co/..."
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="featured"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Featured Product</FormLabel>
+                              <Select onValueChange={(value) => field.onChange(Number(value))} value={String(field.value)}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Featured?" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="0">No</SelectItem>
+                                  <SelectItem value="1">Yes</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="stock"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Stock Status</FormLabel>
+                              <Select onValueChange={(value) => field.onChange(Number(value))} value={String(field.value)}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="In Stock?" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="0">Out of Stock</SelectItem>
+                                  <SelectItem value="1">In Stock</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="flex justify-end space-x-4 pt-4">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => {
+                            setIsAddDialogOpen(false);
+                            setEditingProduct(null);
+                            form.reset();
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button 
+                          type="submit" 
+                          className="gold-gradient text-white"
+                          disabled={addProductMutation.isPending || updateProductMutation.isPending}
+                        >
+                          {addProductMutation.isPending || updateProductMutation.isPending ? (
+                            <>
+                              <i className="fas fa-spinner fa-spin mr-2"></i>
+                              {editingProduct ? "Updating..." : "Adding..."}
+                            </>
+                          ) : (
+                            <>
+                              <i className="fas fa-save mr-2"></i>
+                              {editingProduct ? "Update Product" : "Add Product"}
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map((product: Product) => (
+                <Card key={product.id} className="overflow-hidden">
+                  <div className="aspect-square overflow-hidden">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.name}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
+                      <div className="flex space-x-1">
+                        {product.featured === 1 && (
+                          <span className="bg-gold text-white text-xs px-2 py-1 rounded">
                             Featured
                           </span>
+                        )}
+                        {product.stock === 0 && (
+                          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded">
+                            Out of Stock
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <CardDescription className="line-clamp-2">
+                      {product.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>Weight:</span>
+                        <span className="font-medium">{product.weight}g</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Purity:</span>
+                        <span className="font-medium">{product.purity}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Category:</span>
+                        <span className="font-medium capitalize">{product.category}</span>
+                      </div>
+                      {product.subcategory && (
+                        <div className="flex justify-between">
+                          <span>Type:</span>
+                          <span className="font-medium capitalize">{product.subcategory}</span>
                         </div>
                       )}
                     </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
-                      <div className="flex justify-between items-center text-sm text-gray-500 mb-3">
-                        <span>{product.weight}g</span>
-                        <span>{product.purity}</span>
-                        <span className="capitalize">{product.material}</span>
-                      </div>
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleEdit(product)}
-                          className="flex-1"
-                        >
-                          <Edit className="w-3 h-3 mr-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleDelete(product.id)}
-                          className="text-red-600 hover:text-red-700 hover:border-red-300"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+                    <div className="flex space-x-2 mt-4">
+                      <Button 
+                        onClick={() => handleEdit(product)}
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                      >
+                        <i className="fas fa-edit mr-1"></i>
+                        Edit
+                      </Button>
+                      <Button 
+                        onClick={() => handleDelete(product)}
+                        variant="destructive" 
+                        size="sm"
+                        disabled={deleteProductMutation.isPending}
+                      >
+                        <i className="fas fa-trash mr-1"></i>
+                        Delete
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
-          
-          <TabsContent value="analytics">
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-navy">{products.length}</div>
-                    <div className="text-sm text-gray-600">Total Products</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-gold">{products.filter((p: Product) => p.featured === 1).length}</div>
-                    <div className="text-sm text-gray-600">Featured</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-amber-600">{products.filter((p: Product) => p.material === 'gold').length}</div>
-                    <div className="text-sm text-gray-600">Gold Items</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-600">{products.filter((p: Product) => p.material === 'silver').length}</div>
-                    <div className="text-sm text-gray-600">Silver Items</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+
+          <TabsContent value="rates" className="space-y-6">
+            <h2 className="text-2xl font-semibold">Current Metal Rates</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {rates.map((rate: any) => (
+                <Card key={rate.material}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <i className={`fas ${rate.material === 'gold' ? 'fa-coins' : 'fa-gem'} text-${rate.material === 'gold' ? 'yellow' : 'gray'}-500 mr-2`}></i>
+                      {rate.material === 'gold' ? 'Gold' : 'Silver'} Rate
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="text-3xl font-bold text-gold">
+                        ₹{parseFloat(rate.rate).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      </div>
+                      <div className="text-sm text-gray-600">per gram</div>
+                      <div className={`text-sm ${rate.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {rate.change >= 0 ? '+' : ''}₹{parseFloat(rate.change).toFixed(2)} from last update
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Updated: {new Date(rate.updatedAt).toLocaleString()}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
-          
-          <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Admin Settings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">Admin settings will be available in future updates.</p>
-              </CardContent>
-            </Card>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <h2 className="text-2xl font-semibold">Analytics Dashboard</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                  <i className="fas fa-gem text-gold"></i>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{products.length}</div>
+                  <p className="text-xs text-gray-600">
+                    {products.filter((p: Product) => p.featured === 1).length} featured
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">In Stock</CardTitle>
+                  <i className="fas fa-check-circle text-green-500"></i>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {products.filter((p: Product) => p.stock === 1).length}
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    {products.filter((p: Product) => p.stock === 0).length} out of stock
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Categories</CardTitle>
+                  <i className="fas fa-tags text-blue-500"></i>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {new Set(products.map((p: Product) => p.category)).size}
+                  </div>
+                  <p className="text-xs text-gray-600">
+                    Active categories
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
-
-      <Footer />
     </div>
   );
 }
