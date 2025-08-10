@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { mongoStorage } from "./storage/mongoStorage";
 import { insertRateSchema } from "@shared/schema";
 import { ratesService } from "./ratesService";
+import { liveRatesService } from "./services/liveRatesService";
 import { catalogScraper } from "./services/catalogScraper";
 import { z } from "zod";
 import { insertProductSchema, loginSchema } from "@shared/schema";
@@ -120,22 +121,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Rates routes - Using real market data
+  // Live rates from OMGolds website - Updates every 30 seconds
   app.get("/api/rates", async (req, res) => {
     try {
-      const rates = await ratesService.getCurrentRates();
-      // Update storage with current rates
-      for (const rate of rates) {
+      const liveRates = await liveRatesService.getFormattedRates();
+      // Also update storage with live rates
+      for (const rate of liveRates) {
         await storage.updateRate({
           material: rate.material,
-          rate: rate.rate.toFixed(2),
-          change: rate.change.toFixed(2),
+          rate: rate.rate.toString(),
+          change: rate.change.toString(),
           updatedAt: rate.updatedAt
         });
       }
-      res.json(rates);
+      res.json(liveRates);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch rates" });
+      console.error("Live rates failed, using fallback:", error);
+      // Fallback to existing rate service
+      try {
+        const rates = await ratesService.getCurrentRates();
+        res.json(rates);
+      } catch (fallbackError) {
+        res.status(500).json({ message: "Failed to fetch rates" });
+      }
     }
   });
 
@@ -152,22 +160,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Real-time rate updates every 30 seconds using market simulation
-  setInterval(async () => {
-    try {
-      const rates = await ratesService.getCurrentRates();
-      for (const rate of rates) {
-        await storage.updateRate({
-          material: rate.material,
-          rate: rate.rate.toFixed(2),
-          change: rate.change.toFixed(2),
-          updatedAt: rate.updatedAt
-        });
-      }
-    } catch (error) {
-      console.error("Failed to update rates:", error);
-    }
-  }, 30000);
+  // Live rates are automatically updated by the liveRatesService every 30 seconds
+  console.log("Live rates from OMGolds are automatically updating every 30 seconds");
 
   // Add route for calculating product prices
   app.get("/api/products/:id/price", async (req, res) => {
