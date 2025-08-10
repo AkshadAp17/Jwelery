@@ -23,10 +23,11 @@ Preferred communication style: Simple, everyday language.
 - **Development Setup**: Hot module replacement with Vite integration for seamless development experience
 
 ## Database Design
-- **ORM**: Drizzle ORM configured for PostgreSQL with schema-first approach
-- **Schema**: Three main entities - users, products, and rates with proper relationships and constraints
+- **Database**: MongoDB with Mongoose ODM for flexible document-based storage
+- **Schema**: Enhanced entities - users (with roles), products (with image management), categories, and rates
+- **Image Storage**: Cloudinary integration for optimized image upload and delivery
 - **Validation**: Zod schemas for runtime type checking and API validation
-- **Migrations**: Drizzle Kit for database schema management and migrations
+- **Authentication**: JWT-based user authentication with role-based access control
 
 ## Authentication & Authorization
 - Currently using basic user schema structure (prepared for future authentication implementation)

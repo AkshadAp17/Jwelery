@@ -3,14 +3,21 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Search, Menu, MapPin, Clock, Phone, Mail } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, Menu, MapPin, Clock, Phone, Mail, User, Settings, LogOut } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LanguageSelector from "./LanguageSelector";
+import LoginForm from "./LoginForm";
+import SignupForm from "./SignupForm";
 
 export default function Header() {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const { t } = useLanguage();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const categories = [
     { name: t('nav.necklaces'), path: "/necklaces" },
@@ -115,6 +122,64 @@ export default function Header() {
               </div>
               
               <LanguageSelector />
+
+              {/* Authentication */}
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-2">
+                  <span className="hidden sm:inline text-sm text-navy">
+                    Welcome, {user?.firstName || user?.email}
+                  </span>
+                  <div className="relative group">
+                    <Button variant="ghost" size="icon" className="text-navy">
+                      <User className="w-5 h-5" />
+                    </Button>
+                    <div className="absolute top-full right-0 mt-2 w-48 bg-white shadow-xl rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                      {user?.role === 'admin' && (
+                        <Link href="/admin">
+                          <button className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gold hover:text-white transition-colors">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Admin Panel
+                          </button>
+                        </Link>
+                      )}
+                      <button 
+                        onClick={logout}
+                        className="flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gold hover:text-white transition-colors"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="text-navy border-navy hover:bg-navy hover:text-white">
+                      <User className="w-4 h-4 mr-2" />
+                      Login
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>
+                        {authMode === 'login' ? 'Login to Your Account' : 'Create Account'}
+                      </DialogTitle>
+                    </DialogHeader>
+                    {authMode === 'login' ? (
+                      <LoginForm 
+                        onSuccess={() => setIsAuthDialogOpen(false)}
+                        onToggleMode={() => setAuthMode('signup')}
+                      />
+                    ) : (
+                      <SignupForm 
+                        onSuccess={() => setIsAuthDialogOpen(false)}
+                        onToggleMode={() => setAuthMode('login')}
+                      />
+                    )}
+                  </DialogContent>
+                </Dialog>
+              )}
               
               {/* Mobile Menu */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>

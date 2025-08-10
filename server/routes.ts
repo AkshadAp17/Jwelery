@@ -1,11 +1,19 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { mongoStorage } from "./storage/mongoStorage";
 import { insertRateSchema } from "@shared/schema";
 import { ratesService } from "./ratesService";
 import { z } from "zod";
+import authRoutes from "./routes/auth";
+import adminRoutes from "./routes/admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication routes
+  app.use("/api/auth", authRoutes);
+  
+  // Admin routes
+  app.use("/api/admin", adminRoutes);
   // Products routes
   app.get("/api/products", async (req, res) => {
     try {
@@ -32,6 +40,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(products);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch products by category" });
+    }
+  });
+
+  app.get("/api/products/category/:category/:subcategory", async (req, res) => {
+    try {
+      const { category, subcategory } = req.params;
+      // Use in-memory storage for now since MongoDB is optional
+      const allProducts = await storage.getProductsByCategory(category);
+      const filteredProducts = allProducts.filter((p: any) => p.subcategory === subcategory);
+      res.json(filteredProducts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products by subcategory" });
     }
   });
 
