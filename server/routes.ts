@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertRateSchema } from "@shared/schema";
+import { ratesService } from "./ratesService";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -47,10 +48,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Rates routes
+  // Rates routes - Using real market data
   app.get("/api/rates", async (req, res) => {
     try {
-      const rates = await storage.getRates();
+      const rates = await ratesService.getCurrentRates();
+      // Update storage with current rates
+      for (const rate of rates) {
+        await storage.updateRate({
+          material: rate.material,
+          rate: rate.rate.toFixed(2),
+          change: rate.change.toFixed(2),
+          updatedAt: rate.updatedAt
+        });
+      }
       res.json(rates);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch rates" });
@@ -70,27 +80,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Simulate rate updates every 30 seconds
+  // Real-time rate updates every 30 seconds using market simulation
   setInterval(async () => {
     try {
-      const rates = await storage.getRates();
+      const rates = await ratesService.getCurrentRates();
       for (const rate of rates) {
-        const baseRate = parseFloat(rate.rate);
-        const changePercent = (Math.random() - 0.5) * 0.02; // ±1% change
-        const newChange = baseRate * changePercent;
-        const newRate = baseRate + newChange;
-        
         await storage.updateRate({
           material: rate.material,
-          rate: newRate.toFixed(2),
-          change: newChange.toFixed(2),
-          updatedAt: new Date().toISOString()
+          rate: rate.rate.toFixed(2),
+          change: rate.change.toFixed(2),
+          updatedAt: rate.updatedAt
         });
       }
     } catch (error) {
       console.error("Failed to update rates:", error);
     }
   }, 30000);
+
+  // Add route for calculating product prices
+  app.get("/api/products/:id/price", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const product = await storage.getProduct(id);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      const rates = await ratesService.getCurrentRates();
+      const materialRate = rates.find(r => r.material === product.material);
+      
+      if (!materialRate) {
+        return res.status(404).json({ message: "Rate not found for material" });
+      }
+
+      const purityRate = ratesService.calculatePurityRate(materialRate.rate, product.purity);
+      const weight = parseFloat(product.weight);
+      const totalPrice = purityRate * weight;
+
+      res.json({
+        productId: id,
+        weight: weight,
+        purity: product.purity,
+        material: product.material,
+        ratePerGram: purityRate.toFixed(2),
+        totalPrice: totalPrice.toFixed(2),
+        updatedAt: materialRate.updatedAt
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to calculate price" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

@@ -3,12 +3,30 @@ import { Product } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, ShoppingBag } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { t } = useLanguage();
+  
+  // Fetch real-time price for this product
+  const { data: priceData } = useQuery<{
+    productId: string;
+    weight: number;
+    purity: string;
+    material: string;
+    ratePerGram: string;
+    totalPrice: string;
+    updatedAt: string;
+  }>({
+    queryKey: ["/api/products", product.id, "price"],
+    refetchInterval: 60000, // Refetch every minute
+  });
+
   const getBadgeColor = () => {
     if (product.featured === 1) return "bg-gold text-white";
     if (product.material === "gold") return "bg-amber-100 text-amber-800";
@@ -46,9 +64,26 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h4 className="font-semibold text-lg text-navy mb-2 line-clamp-1">{product.name}</h4>
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
         
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-2xl font-bold text-gold">{product.weight}g</span>
-          <span className="text-sm text-gray-500">{product.purity}</span>
+        <div className="flex flex-col space-y-2 mb-4">
+          <div className="flex justify-between items-center">
+            <span className="text-lg font-bold text-gold">{product.weight}g</span>
+            <span className="text-sm text-gray-500">{product.purity}</span>
+          </div>
+          {priceData && (
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-gray-500">
+                ₹{priceData.ratePerGram}/{t('product.weight').toLowerCase()}
+              </span>
+              <span className="text-lg font-bold text-navy">
+                ₹{priceData.totalPrice}
+              </span>
+            </div>
+          )}
+          {product.region && (
+            <div className="text-xs text-gray-500 capitalize">
+              {product.region} Style
+            </div>
+          )}
         </div>
         
         <div className="flex space-x-2">

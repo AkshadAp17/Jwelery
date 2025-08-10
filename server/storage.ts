@@ -29,73 +29,209 @@ export class MemStorage implements IStorage {
   }
 
   private initializeData() {
-    // Initialize sample products
+    // Initialize comprehensive Indian jewelry products
     const sampleProducts: InsertProduct[] = [
+      // Gold Necklaces
       {
-        name: "Classic Gold Pendant",
-        description: "Traditional design with modern appeal",
+        name: "22K Gold Chain Necklace",
+        description: "Classic daily wear gold chain",
         category: "necklaces",
+        subcategory: "chains",
         weight: "15.5",
         purity: "22K Gold",
         material: "gold",
         imageUrl: "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1
+        featured: 1,
+        pricePerGram: "6250.00"
       },
       {
-        name: "Silver Designer Bracelet",
-        description: "Intricate patterns with contemporary style",
-        category: "bracelets",
+        name: "Antique Gold Choker",
+        description: "Traditional South Indian design",
+        category: "necklaces",
+        subcategory: "chokers",
+        weight: "35.0",
+        purity: "22K Gold",
+        material: "gold",
+        region: "South Indian",
+        imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 1,
+        pricePerGram: "6250.00"
+      },
+      
+      // Mangalsutra Types
+      {
+        name: "Maharashtrian Mangalsutra",
+        description: "Traditional black beads with gold pendant",
+        category: "mangalsutra",
+        subcategory: "maharashtrian",
+        weight: "18.5",
+        purity: "22K Gold",
+        material: "gold",
+        region: "Maharashtrian",
+        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 1,
+        pricePerGram: "6250.00"
+      },
+      {
+        name: "Andhra Style Mangalsutra",
+        description: "Long chain with traditional motifs",
+        category: "mangalsutra",
+        subcategory: "andhra",
         weight: "25.0",
-        purity: "925 Silver",
-        material: "silver",
-        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1
+        purity: "22K Gold",
+        material: "gold",
+        region: "Andhra",
+        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 0,
+        pricePerGram: "6250.00"
       },
       {
-        name: "Diamond Engagement Ring",
-        description: "Solitaire setting with brilliant cut diamond",
+        name: "Rajasthani Mangalsutra",
+        description: "Ornate design with Kundan work",
+        category: "mangalsutra",
+        subcategory: "rajasthani",
+        weight: "22.0",
+        purity: "22K Gold",
+        material: "gold",
+        region: "Rajasthani",
+        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 0,
+        pricePerGram: "6250.00"
+      },
+      
+      // Gold Rings
+      {
+        name: "Gold Wedding Ring",
+        description: "Simple elegant band for daily wear",
         category: "rings",
+        subcategory: "wedding",
         weight: "8.5",
         purity: "18K Gold",
         material: "gold",
         imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1
+        featured: 1,
+        pricePerGram: "5200.00"
       },
       {
-        name: "Traditional Pearl Earrings",
-        description: "Classic design with cultured pearls",
+        name: "Gold Signet Ring",
+        description: "Traditional men's signet ring",
+        category: "rings",
+        subcategory: "signet",
+        weight: "12.0",
+        purity: "20K Gold",
+        material: "gold",
+        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 0,
+        pricePerGram: "5800.00"
+      },
+      
+      // Gold Earrings
+      {
+        name: "Gold Jhumka Earrings",
+        description: "Traditional bell-shaped earrings",
         category: "earrings",
+        subcategory: "jhumkas",
         weight: "12.0",
         purity: "22K Gold",
         material: "gold",
         imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1
+        featured: 1,
+        pricePerGram: "6250.00"
       },
       {
+        name: "Gold Chandbali Earrings",
+        description: "Crescent moon shaped traditional earrings",
+        category: "earrings",
+        subcategory: "chandbali",
+        weight: "15.5",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 0,
+        pricePerGram: "6250.00"
+      },
+      
+      // Silver Items
+      {
+        name: "Silver Pooja Thali",
+        description: "Pure silver plate for religious ceremonies",
+        category: "pooja-items",
+        subcategory: "plates",
+        weight: "250.0",
+        purity: "999 Silver",
+        material: "silver",
+        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 1,
+        pricePerGram: "85.00"
+      },
+      {
+        name: "Silver Deepak (Diya)",
+        description: "Traditional oil lamp for festivals",
+        category: "pooja-items",
+        subcategory: "deepak",
+        weight: "85.0",
+        purity: "925 Silver",
+        material: "silver",
+        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 1,
+        pricePerGram: "82.00"
+      },
+      {
+        name: "Silver Water Glass Set",
+        description: "Set of 6 pure silver drinking glasses",
+        category: "pooja-items",
+        subcategory: "glasses",
+        weight: "180.0",
+        purity: "999 Silver",
+        material: "silver",
+        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 0,
+        pricePerGram: "85.00"
+      },
+      {
+        name: "Silver Ganesha Idol",
+        description: "Lord Ganesha statue for home temple",
+        category: "pooja-items",
+        subcategory: "idols",
+        weight: "125.0",
+        purity: "925 Silver",
+        material: "silver",
+        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 1,
+        pricePerGram: "82.00"
+      },
+      {
+        name: "Silver Bracelet",
+        description: "Elegant daily wear silver bracelet",
+        category: "bracelets",
+        subcategory: "bangles",
+        weight: "25.0",
+        purity: "925 Silver",
+        material: "silver",
+        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        featured: 0,
+        pricePerGram: "82.00"
+      },
+      
+      // Haras
+      {
         name: "Royal Heritage Haar",
-        description: "Traditional royal design with intricate work",
+        description: "Traditional long necklace with intricate work",
         category: "haras",
+        subcategory: "long-haar",
         weight: "45.5",
         purity: "22K Gold",
         material: "gold",
+        region: "Rajasthani",
         imageUrl: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 0
-      },
-      {
-        name: "Sacred Mangalsutra",
-        description: "Traditional design with modern touch",
-        category: "mangalsutra",
-        weight: "18.5",
-        purity: "22K Gold",
-        material: "gold",
-        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 0
+        featured: 1,
+        pricePerGram: "6250.00"
       }
     ];
 
     sampleProducts.forEach(product => {
       const id = randomUUID();
-      this.products.set(id, { ...product, id });
+      this.products.set(id, { ...product, id, featured: product.featured || 0 });
     });
 
     // Initialize rates
@@ -153,7 +289,7 @@ export class MemStorage implements IStorage {
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
     const id = randomUUID();
-    const product: Product = { ...insertProduct, id };
+    const product: Product = { ...insertProduct, id, featured: insertProduct.featured || 0 };
     this.products.set(id, product);
     return product;
   }

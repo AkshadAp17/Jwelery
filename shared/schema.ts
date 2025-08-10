@@ -14,11 +14,14 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   description: text("description").notNull(),
   category: text("category").notNull(),
+  subcategory: text("subcategory"),
   weight: decimal("weight", { precision: 10, scale: 2 }).notNull(),
   purity: text("purity").notNull(),
   material: text("material").notNull(), // gold, silver
   imageUrl: text("image_url").notNull(),
   featured: integer("featured").default(0),
+  region: text("region"), // Andhra, Maharashtrian, Rajasthani, etc.
+  pricePerGram: decimal("price_per_gram", { precision: 10, scale: 2 }),
 });
 
 export const rates = pgTable("rates", {

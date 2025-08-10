@@ -4,18 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Search, Menu, MapPin, Clock, Phone, Mail } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const categories = [
-    { name: "Necklaces", path: "/necklaces" },
-    { name: "Haras", path: "/haras" },
-    { name: "Mangalsutra", path: "/mangalsutra" },
-    { name: "Rings", path: "/rings" },
-    { name: "Earrings", path: "/earrings" },
-    { name: "Bracelets", path: "/bracelets" },
+    { name: t('nav.necklaces'), path: "/necklaces" },
+    { name: t('nav.haras'), path: "/haras" },
+    { name: t('nav.mangalsutra'), path: "/mangalsutra" },
+    { name: t('nav.rings'), path: "/rings" },
+    { name: t('nav.earrings'), path: "/earrings" },
+    { name: t('nav.bracelets'), path: "/bracelets" },
+    { name: t('nav.pooja-items'), path: "/pooja-items" },
   ];
 
   return (
@@ -60,7 +64,7 @@ export default function Header() {
               <div className="flex items-center">
                 <h1 className="font-playfair text-3xl font-bold text-navy">
                   <i className="fas fa-gem text-gold mr-2"></i>
-                  Shree Jewellers
+                  {t('company.name')}
                 </h1>
               </div>
             </Link>
@@ -74,13 +78,13 @@ export default function Header() {
                     location === "/" ? "text-gold" : ""
                   }`}
                 >
-                  Home
+                  {t('nav.home')}
                 </Button>
               </Link>
               
               <div className="relative group">
                 <Button variant="ghost" className="text-navy hover:text-gold transition-colors font-medium">
-                  Collections <i className="fas fa-chevron-down ml-1"></i>
+                  {t('nav.collections')} <i className="fas fa-chevron-down ml-1"></i>
                 </Button>
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                   {categories.map((category) => (
@@ -104,11 +108,13 @@ export default function Header() {
               <div className="relative hidden sm:block">
                 <Input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder={t('search.placeholder')}
                   className="border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:border-gold"
                 />
                 <Search className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               </div>
+              
+              <LanguageSelector />
               
               {/* Mobile Menu */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
