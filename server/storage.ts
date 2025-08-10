@@ -10,6 +10,7 @@ export interface IStorage {
   getProductsByCategory(category: string): Promise<Product[]>;
   getProduct(id: string): Promise<Product | undefined>;
   createProduct(product: InsertProduct): Promise<Product>;
+  importCatalogProducts(products: InsertProduct[]): Promise<Product[]>;
   getFeaturedProducts(): Promise<Product[]>;
   
   getRates(): Promise<Rate[]>;
@@ -231,7 +232,14 @@ export class MemStorage implements IStorage {
 
     sampleProducts.forEach(product => {
       const id = randomUUID();
-      this.products.set(id, { ...product, id, featured: product.featured || 0 });
+      this.products.set(id, { 
+        ...product, 
+        id, 
+        featured: product.featured || 0,
+        subcategory: product.subcategory || null,
+        region: product.region || null,
+        pricePerGram: product.pricePerGram || null
+      });
     });
 
     // Initialize rates
@@ -289,7 +297,14 @@ export class MemStorage implements IStorage {
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
     const id = randomUUID();
-    const product: Product = { ...insertProduct, id, featured: insertProduct.featured || 0 };
+    const product: Product = { 
+      ...insertProduct, 
+      id, 
+      featured: insertProduct.featured || 0,
+      subcategory: insertProduct.subcategory || null,
+      region: insertProduct.region || null,
+      pricePerGram: insertProduct.pricePerGram || null
+    };
     this.products.set(id, product);
     return product;
   }
@@ -316,6 +331,15 @@ export class MemStorage implements IStorage {
       this.rates.set(insertRate.material, rate);
       return rate;
     }
+  }
+
+  async importCatalogProducts(products: InsertProduct[]): Promise<Product[]> {
+    const createdProducts: Product[] = [];
+    for (const product of products) {
+      const createdProduct = await this.createProduct(product);
+      createdProducts.push(createdProduct);
+    }
+    return createdProducts;
   }
 }
 

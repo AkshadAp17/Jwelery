@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { mongoStorage } from "./storage/mongoStorage";
 import { insertRateSchema } from "@shared/schema";
 import { ratesService } from "./ratesService";
+import { catalogScraper } from "./services/catalogScraper";
 import { z } from "zod";
 import authRoutes from "./routes/auth";
 import adminRoutes from "./routes/admin";
@@ -148,6 +149,124 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ message: "Failed to calculate price" });
+    }
+  });
+
+  // Catalog import route
+  app.post("/api/catalog/import", async (req, res) => {
+    try {
+      // Create products based on the catalog data from mamdejewellers.catalog.to
+      const catalogProducts = [
+        {
+          name: "Patti Long Poth 22K",
+          description: "Premium long patti chain with traditional design - 78 designs available",
+          category: "necklaces",
+          subcategory: "long-chains",
+          weight: "35.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OUANr2XivMO9ndCXNbm.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Patti Short Poth 22K",
+          description: "Elegant short patti chain perfect for daily wear - 67 designs available",
+          category: "necklaces", 
+          subcategory: "short-chains",
+          weight: "20.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OV32_LA01WVd3tBQeGh.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Temple Necklace 22K",
+          description: "Traditional temple design necklace - 26 designs available",
+          category: "necklaces",
+          subcategory: "temple",
+          weight: "45.0",
+          purity: "22K Gold", 
+          material: "gold",
+          region: "South Indian",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OQbGrKDYWOMt4I1P3_D.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Fancy Necklace 22K",
+          description: "Modern fancy necklace with intricate patterns - 31 designs available",
+          category: "necklaces",
+          subcategory: "fancy",
+          weight: "28.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OUyR7FLxj9OG89qpI94.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Necklace 22K Collection",
+          description: "Comprehensive 22K gold necklace collection - 296 designs available",
+          category: "necklaces",
+          subcategory: "traditional",
+          weight: "32.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSEuuQBC0n-PhssMD0l.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Temple Choker 22K",
+          description: "Traditional temple design choker - 11 designs available",
+          category: "necklaces",
+          subcategory: "chokers",
+          weight: "25.0",
+          purity: "22K Gold",
+          material: "gold",
+          region: "South Indian",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSTu3vTuwmExEYADJ5v.jpg",
+          featured: 0,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Fancy Necklace 20K",
+          description: "Stylish 20K gold necklace collection - 60 designs available",
+          category: "necklaces",
+          subcategory: "fancy",
+          weight: "30.0",
+          purity: "20K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OWBDQnKvRuKIs0Etcej.jpg",
+          featured: 0,
+          pricePerGram: "5850.00"
+        },
+        {
+          name: "Arbi Necklace 20K",
+          description: "Traditional Arabic style necklace - 26 designs available",
+          category: "necklaces",
+          subcategory: "arbi",
+          weight: "25.0",
+          purity: "20K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OL9cg9hfPV1a3MTjZJx.jpg",
+          featured: 0,
+          pricePerGram: "5850.00"
+        }
+      ];
+      
+      const importedProducts = await storage.importCatalogProducts(catalogProducts);
+      
+      res.json({
+        message: `Successfully imported ${importedProducts.length} products from Mamde Jewellers catalog`,
+        imported: importedProducts.length,
+        products: importedProducts
+      });
+    } catch (error) {
+      console.error('Catalog import error:', error);
+      res.status(500).json({ message: "Failed to import catalog products" });
     }
   });
 

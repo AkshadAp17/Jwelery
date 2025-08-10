@@ -13,6 +13,7 @@ import { Plus, Edit, Trash2, Upload, Image } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { CatalogImporter } from "@/components/CatalogImporter";
 
 interface Product {
   id: string;
