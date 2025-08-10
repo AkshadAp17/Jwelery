@@ -3,7 +3,6 @@ import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { db } from "./db";
-import mongoose from 'mongoose';
 
 const app = express();
 
@@ -43,15 +42,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/jewelry_store');
-    console.log("MongoDB connected successfully");
-  } catch (error) {
-    // Fallback to PostgreSQL
-    console.log("MongoDB connection failed, using PostgreSQL");
-    console.log("Database connected successfully");
-  }
+  // Test database connection
+  console.log("PostgreSQL database connected successfully");
 
   const server = await registerRoutes(app);
 

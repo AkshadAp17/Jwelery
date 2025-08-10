@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { mongoStorage } from "./storage/mongoStorage";
+import { DatabaseStorage } from "./storage";
 import { insertRateSchema } from "@shared/schema";
 import { ratesService } from "./ratesService";
 import { catalogScraper } from "./services/catalogScraper";
@@ -8,8 +8,8 @@ import { z } from "zod";
 import { insertProductSchema, loginSchema } from "@shared/schema";
 import jwt from "jsonwebtoken";
 
-// Use MongoDB storage instead of PostgreSQL
-const storage = mongoStorage;
+// Use PostgreSQL storage - reliable and working
+const storage = new DatabaseStorage();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
