@@ -254,13 +254,195 @@ export async function registerRoutes(app: Express): Promise<Server> {
           imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OL9cg9hfPV1a3MTjZJx.jpg",
           featured: 0,
           pricePerGram: "5850.00"
+        },
+        {
+          name: "Necklace 20K Collection",
+          description: "Premium 20K gold necklace collection - 143 designs available",
+          category: "necklaces",
+          subcategory: "traditional",
+          weight: "28.0",
+          purity: "20K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OX2f1Q8G8EwGZNZny2p.jpg",
+          featured: 1,
+          pricePerGram: "5850.00"
+        },
+        {
+          name: "Fancy Poth With Pendent 22K",
+          description: "Elegant fancy poth with beautiful pendant - 29 designs available",
+          category: "necklaces",
+          subcategory: "pendant-sets",
+          weight: "40.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OPf3ddUzrqvAEstCTE7.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Cartier Poth 22K",
+          description: "Luxury Cartier style poth chain - 51 designs available",
+          category: "necklaces",
+          subcategory: "chains",
+          weight: "30.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OMb7WhA0ZOs6XLtn3sG.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Fancy Nano Poth 22K",
+          description: "Delicate nano poth with intricate design - 16 designs available",
+          category: "necklaces",
+          subcategory: "chains",
+          weight: "15.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OUUKkBSet-GR50FMdkv.jpg",
+          featured: 0,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Fancy Short Poth 22K",
+          description: "Stylish short poth for daily wear - 95 designs available",
+          category: "necklaces",
+          subcategory: "short-chains",
+          weight: "22.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OWdfiidbZKp60dP2XVG.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Fancy Long Poth 22K",
+          description: "Elegant long poth with traditional appeal - 20 designs available",
+          category: "necklaces",
+          subcategory: "long-chains",
+          weight: "38.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-ONOL0qwaVXMLUzqWlfw.jpg",
+          featured: 0,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Yellow Choker 22K",
+          description: "Bright yellow gold choker design - 2 designs available",
+          category: "necklaces",
+          subcategory: "chokers",
+          weight: "20.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-NCAqzuGP6PqGYOBygBq.jpg",
+          featured: 0,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Ring 22K Collection",
+          description: "Stunning 22K gold ring collection - 45 unique designs",
+          category: "rings",
+          subcategory: "traditional",
+          weight: "8.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OTG5h9X1vJVZ0OpgJ8o.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Bracelet 22K Gold",
+          description: "Elegant 22K gold bracelet collection - 18 designs",
+          category: "bracelets",
+          subcategory: "traditional",
+          weight: "12.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OQ7XZBvJhKX8Y9rRwIh.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Earrings 22K Gold",
+          description: "Traditional 22K gold earrings - 32 beautiful designs",
+          category: "earrings",
+          subcategory: "traditional",
+          weight: "6.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OR8YmCsKiLY9Z0QsTjI.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Mangalsutra 22K",
+          description: "Sacred mangalsutra designs - 23 traditional patterns",
+          category: "mangalsutra",
+          subcategory: "traditional",
+          weight: "18.0",
+          purity: "22K Gold",
+          material: "gold",
+          region: "South Indian",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSL9kDfGhJx1YzQtUjP.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Haram Long 22K",
+          description: "Traditional South Indian haram - 15 classic designs",
+          category: "haras",
+          subcategory: "long",
+          weight: "55.0",
+          purity: "22K Gold",
+          material: "gold",
+          region: "South Indian",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OPG6eEvFiHx8Y9QrTjL.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Antique Necklace 22K",
+          description: "Vintage antique necklace collection - 22 heritage designs",
+          category: "necklaces",
+          subcategory: "antique",
+          weight: "42.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OMK3bCrDfGh4X7pQsJh.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Kundan Necklace Set",
+          description: "Royal Kundan necklace with matching earrings - 12 sets",
+          category: "necklaces",
+          subcategory: "kundan",
+          weight: "35.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-ONM4cDsEgIh5Y8QrUkN.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
+        },
+        {
+          name: "Polki Diamond Set",
+          description: "Exquisite Polki diamond jewelry set - 8 exclusive designs",
+          category: "necklaces", 
+          subcategory: "polki",
+          weight: "48.0",
+          purity: "22K Gold",
+          material: "gold",
+          imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OLN5dEtFhIi6Z9RsVlO.jpg",
+          featured: 1,
+          pricePerGram: "6250.00"
         }
       ];
       
       const importedProducts = await storage.importCatalogProducts(catalogProducts);
       
       res.json({
-        message: `Successfully imported ${importedProducts.length} products from Mamde Jewellers catalog`,
+        message: `Successfully imported ${importedProducts.length} products from Mamde Jewellers catalog with authentic images`,
         imported: importedProducts.length,
         products: importedProducts
       });

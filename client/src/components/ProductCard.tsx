@@ -45,6 +45,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           src={product.imageUrl}
           alt={product.name}
           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+          onError={(e) => {
+            const img = e.target as HTMLImageElement;
+            img.src = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=300&fit=crop&crop=center';
+          }}
         />
         <div className="absolute top-4 right-4">
           {product.featured === 1 ? (
