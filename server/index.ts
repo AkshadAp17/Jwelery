@@ -2,7 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { db } from "./db";
+import { connectMongoDB } from "./config/mongodb";
 
 const app = express();
 
@@ -42,8 +42,13 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Test database connection
-  console.log("PostgreSQL database connected successfully");
+  try {
+    // Connect to MongoDB
+    await connectMongoDB();
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1);
+  }
 
   const server = await registerRoutes(app);
 

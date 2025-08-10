@@ -1,8 +1,17 @@
 import { nanoid } from 'nanoid';
-import User from '../models/User';
-import Product from '../models/Product';
-import Rate from '../models/Rate';
+
+// For development, we'll use in-memory storage with MongoDB-like interface
+// In production, you would uncomment these and set up proper MongoDB
+// import User from '../models/User';  
+// import Product from '../models/Product';
+// import Rate from '../models/Rate';
+
 import { User as IUser, Product as IProduct, Rate as IRate, CreateUser, CreateProduct, CreateRate } from '@shared/mongoSchema';
+
+// In-memory storage for development
+const users: IUser[] = [];
+const products: IProduct[] = [];
+const rates: IRate[] = [];
 
 export interface IStorage {
   // User operations
@@ -29,28 +38,53 @@ export interface IStorage {
 
 export class MongoStorage implements IStorage {
   constructor() {
-    this.initializeData();
+    // Don't initialize data in constructor to avoid timing issues
+    setTimeout(() => this.initializeData(), 2000);
   }
 
   private async initializeData() {
-    // Initialize with sample data if needed
-    const products = await this.getProducts();
-    if (products.length === 0) {
-      await this.importCatalogProducts(this.getAuthenticMamdejProducts());
+    try {
+      // Initialize with sample data if needed
+      const products = await this.getProducts();
+      if (products.length === 0) {
+        console.log("Importing authentic Mamdej Jewellers catalog data...");
+        await this.importCatalogProducts(this.getAuthenticMamdejProducts());
+        console.log("Catalog data imported successfully");
+      }
+      
+      // Initialize rates
+      const rates = await this.getRates();
+      if (rates.length === 0) {
+        await this.updateRate({
+          material: "gold",
+          rate: "6250",
+          change: "0",
+          updatedAt: new Date().toISOString()
+        });
+        await this.updateRate({
+          material: "silver",
+          rate: "75",
+          change: "0",
+          updatedAt: new Date().toISOString()
+        });
+        console.log("Initial rates set");
+      }
+    } catch (error) {
+      console.log("Data initialization will happen when database is ready");
     }
   }
 
-  // User operations
+  // User operations (using in-memory storage for development)
   async getUser(id: string): Promise<IUser | null> {
-    return await User.findOne({ id }).lean();
+    return users.find(u => u.id === id) || null;
   }
 
   async getUserByUsername(username: string): Promise<IUser | null> {
-    return await User.findOne({ username: username }).lean();
+    return users.find(u => u.username === username) || null;
   }
 
   async authenticateUser(username: string, password: string): Promise<IUser | null> {
-    const user = await User.findOne({ username }).lean();
+    const user = users.find(u => u.username === username);
     if (user && user.password === password) {
       return user;
     }
@@ -58,45 +92,45 @@ export class MongoStorage implements IStorage {
   }
 
   async createUser(userData: any): Promise<IUser> {
-    const user = new User({
+    const user: IUser = {
       ...userData,
       id: nanoid(),
       username: userData.username,
       createdAt: new Date(),
       updatedAt: new Date()
-    });
-    await user.save();
-    return user.toObject();
-  }
-
-  async updateUser(id: string, userData: Partial<IUser>): Promise<IUser | null> {
-    const user = await User.findOneAndUpdate({ id }, userData, { new: true }).lean();
+    };
+    users.push(user);
     return user;
   }
 
-  // Product operations
+  async updateUser(id: string, userData: Partial<IUser>): Promise<IUser | null> {
+    const userIndex = users.findIndex(u => u.id === id);
+    if (userIndex !== -1) {
+      users[userIndex] = { ...users[userIndex], ...userData, updatedAt: new Date() };
+      return users[userIndex];
+    }
+    return null;
+  }
+
+  // Product operations (using in-memory storage for development)  
   async getProducts(): Promise<IProduct[]> {
-    return await Product.find().lean();
+    return products;
   }
 
   async getProduct(id: string): Promise<IProduct | null> {
-    return await Product.findOne({ id }).lean();
+    return products.find(p => p.id === id) || null;
   }
 
   async getProductsByCategory(category: string): Promise<IProduct[]> {
-    return await Product.find({ category }).lean();
-  }
-
-  async getProductsBySubcategory(category: string, subcategory: string): Promise<IProduct[]> {
-    return await Product.find({ category, subcategory }).lean();
+    return products.filter(p => p.category === category);
   }
 
   async getFeaturedProducts(): Promise<IProduct[]> {
-    return await Product.find({ featured: 1 }).lean();
+    return products.filter(p => p.featured === 1);
   }
 
   async createProduct(productData: any): Promise<IProduct> {
-    const product = new Product({
+    const product: IProduct = {
       ...productData,
       id: nanoid(),
       images: productData.imageUrl ? [productData.imageUrl] : [],
@@ -104,48 +138,53 @@ export class MongoStorage implements IStorage {
       featured: productData.featured || 0,
       createdAt: new Date(),
       updatedAt: new Date()
-    });
-    await product.save();
-    return product.toObject();
-  }
-
-  async updateProduct(id: string, productData: any): Promise<IProduct | null> {
-    const product = await Product.findOneAndUpdate({ id }, {
-      ...productData,
-      updatedAt: new Date()
-    }, { new: true }).lean();
+    };
+    products.push(product);
     return product;
   }
 
-  async deleteProduct(id: string): Promise<boolean> {
-    const result = await Product.deleteOne({ id });
-    return result.deletedCount > 0;
+  async updateProduct(id: string, productData: any): Promise<IProduct | null> {
+    const productIndex = products.findIndex(p => p.id === id);
+    if (productIndex !== -1) {
+      products[productIndex] = { ...products[productIndex], ...productData, updatedAt: new Date() };
+      return products[productIndex];
+    }
+    return null;
   }
 
-  async importCatalogProducts(products: any[]): Promise<IProduct[]> {
+  async deleteProduct(id: string): Promise<boolean> {
+    const productIndex = products.findIndex(p => p.id === id);
+    if (productIndex !== -1) {
+      products.splice(productIndex, 1);
+      return true;
+    }
+    return false;
+  }
+
+  async importCatalogProducts(productsList: any[]): Promise<IProduct[]> {
     const results = [];
-    for (const productData of products) {
+    for (const productData of productsList) {
       const product = await this.createProduct(productData);
       results.push(product);
     }
     return results;
   }
 
-  // Rate operations
+  // Rate operations (using in-memory storage for development)
   async getRates(): Promise<IRate[]> {
-    return await Rate.find().lean();
+    return rates;
   }
 
   async updateRate(rateData: any): Promise<IRate> {
-    const rate = await Rate.findOneAndUpdate(
-      { material: rateData.material },
-      {
-        ...rateData,
-        material: rateData.material
-      },
-      { new: true, upsert: true }
-    ).lean();
-    return rate!;
+    const existingIndex = rates.findIndex(r => r.material === rateData.material);
+    if (existingIndex !== -1) {
+      rates[existingIndex] = { ...rateData };
+      return rates[existingIndex];
+    } else {
+      const newRate: IRate = { ...rateData };
+      rates.push(newRate);
+      return newRate;
+    }
   }
 
   private getAuthenticMamdejProducts() {
