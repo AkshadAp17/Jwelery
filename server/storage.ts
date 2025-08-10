@@ -30,38 +30,53 @@ export class DatabaseStorage implements IStorage {
   }
 
   private async initializeData() {
-    // Create admin user if not exists
-    const adminExists = await this.getUserByUsername("admin");
-    if (!adminExists) {
-      await this.createUser({
-        username: "admin",
-        password: "admin123",
-        email: "admin@shreejewellers.com",
-        role: "admin"
-      });
+    try {
+      // Create admin user if not exists
+      const adminExists = await this.getUserByUsername("admin");
+      if (!adminExists) {
+        await this.createUser({
+          username: "admin",
+          password: "admin123",
+          email: "admin@shreejewellers.com",
+          role: "admin"
+        });
+        console.log("Admin user created successfully");
+      }
+    } catch (error) {
+      console.log("Admin user already exists, skipping creation");
     }
 
-    // Initialize with authentic Mamdej Jewellers catalog data
-    const existingProducts = await this.getProducts();
-    if (existingProducts.length === 0) {
-      await this.importCatalogProducts(this.getAuthenticMamdejProducts());
+    try {
+      // Initialize with authentic Mamdej Jewellers catalog data
+      const existingProducts = await this.getProducts();
+      if (existingProducts.length === 0) {
+        await this.importCatalogProducts(this.getAuthenticMamdejProducts());
+        console.log("Catalog products imported successfully");
+      }
+    } catch (error) {
+      console.log("Products already exist, skipping import");
     }
 
-    // Initialize rates if not exists
-    const existingRates = await this.getRates();
-    if (existingRates.length === 0) {
-      await this.updateRate({
-        material: "gold",
-        rate: "6250",
-        change: "0",
-        updatedAt: new Date().toISOString()
-      });
-      await this.updateRate({
-        material: "silver",
-        rate: "75",
-        change: "0",
-        updatedAt: new Date().toISOString()
-      });
+    try {
+      // Initialize rates if not exists
+      const existingRates = await this.getRates();
+      if (existingRates.length === 0) {
+        await this.updateRate({
+          material: "gold",
+          rate: "6250",
+          change: "0",
+          updatedAt: new Date().toISOString()
+        });
+        await this.updateRate({
+          material: "silver",
+          rate: "75",
+          change: "0",
+          updatedAt: new Date().toISOString()
+        });
+        console.log("Initial rates set successfully");
+      }
+    } catch (error) {
+      console.log("Rates already exist, skipping initialization");
     }
   }
 

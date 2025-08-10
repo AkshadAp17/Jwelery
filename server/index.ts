@@ -2,8 +2,6 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { connectMongoDB } from "./config/mongodb";
-
 const app = express();
 
 // Middleware
@@ -42,14 +40,6 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  try {
-    // Connect to MongoDB
-    await connectMongoDB();
-  } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
-    process.exit(1);
-  }
-
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
