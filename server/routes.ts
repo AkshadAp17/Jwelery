@@ -1,0 +1,97 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { insertRateSchema } from "@shared/schema";
+import { z } from "zod";
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Products routes
+  app.get("/api/products", async (req, res) => {
+    try {
+      const products = await storage.getProducts();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products" });
+    }
+  });
+
+  app.get("/api/products/featured", async (req, res) => {
+    try {
+      const products = await storage.getFeaturedProducts();
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch featured products" });
+    }
+  });
+
+  app.get("/api/products/category/:category", async (req, res) => {
+    try {
+      const { category } = req.params;
+      const products = await storage.getProductsByCategory(category);
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products by category" });
+    }
+  });
+
+  app.get("/api/products/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const product = await storage.getProduct(id);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch product" });
+    }
+  });
+
+  // Rates routes
+  app.get("/api/rates", async (req, res) => {
+    try {
+      const rates = await storage.getRates();
+      res.json(rates);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch rates" });
+    }
+  });
+
+  app.post("/api/rates/update", async (req, res) => {
+    try {
+      const rateData = insertRateSchema.parse(req.body);
+      const updatedRate = await storage.updateRate(rateData);
+      res.json(updatedRate);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid rate data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update rate" });
+    }
+  });
+
+  // Simulate rate updates every 30 seconds
+  setInterval(async () => {
+    try {
+      const rates = await storage.getRates();
+      for (const rate of rates) {
+        const baseRate = parseFloat(rate.rate);
+        const changePercent = (Math.random() - 0.5) * 0.02; // ±1% change
+        const newChange = baseRate * changePercent;
+        const newRate = baseRate + newChange;
+        
+        await storage.updateRate({
+          material: rate.material,
+          rate: newRate.toFixed(2),
+          change: newChange.toFixed(2),
+          updatedAt: new Date().toISOString()
+        });
+      }
+    } catch (error) {
+      console.error("Failed to update rates:", error);
+    }
+  }, 30000);
+
+  const httpServer = createServer(app);
+  return httpServer;
+}
