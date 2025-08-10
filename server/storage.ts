@@ -35,7 +35,7 @@ export class MemStorage implements IStorage {
       // PATTA POTH 22K - Long Poth
       {
         name: "Patti Long Poth 22K",
-        description: "Traditional long patta poth chain with intricate design",
+        description: "Traditional long patta poth chain with intricate design - authentic Mamdej Jewellers design (78 items in collection)",
         category: "patta-poth",
         subcategory: "long",
         weight: "25.5",
@@ -47,7 +47,7 @@ export class MemStorage implements IStorage {
       },
       {
         name: "Patti Short Poth 22K",
-        description: "Elegant short patta poth design for daily wear",
+        description: "Elegant short patta poth design for daily wear - authentic Mamdej Jewellers design (67 items in collection)",
         category: "patta-poth",
         subcategory: "short",
         weight: "18.5",
@@ -61,7 +61,7 @@ export class MemStorage implements IStorage {
       // NECKLACE 20K
       {
         name: "Fancy Necklace 20K",
-        description: "Beautiful fancy design necklace in 20K gold",
+        description: "Beautiful fancy design necklace in 20K gold - authentic Mamdej Jewellers design (60 items in collection)",
         category: "necklace",
         subcategory: "fancy-20k",
         weight: "35.0",
@@ -73,7 +73,7 @@ export class MemStorage implements IStorage {
       },
       {
         name: "Classic Necklace 20K",
-        description: "Traditional necklace design in 20K gold",
+        description: "Traditional necklace design in 20K gold - authentic Mamdej Jewellers design (143 items in collection)",
         category: "necklace",
         subcategory: "classic-20k",
         weight: "28.0",

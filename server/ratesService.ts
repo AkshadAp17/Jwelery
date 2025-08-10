@@ -40,7 +40,8 @@ class RatesService {
         return this.getFallbackRates();
       }
 
-      const url = `${this.apiUrl}?api_key=${this.apiKey}&base=USD&currencies=XAU,XAG`;
+      // Use the specific API URL from user's request
+      const url = `https://api.metalpriceapi.com/v1/latest?api_key=a36737b806cee683ac894208e57cc018&base=USD&currencies=EUR,XAU,XAG`;
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -51,7 +52,7 @@ class RatesService {
       const data: MetalPriceApiResponse = await response.json();
       
       if (!data.success || !data.rates.XAU || !data.rates.XAG) {
-        console.error('Invalid Metal Price API response');
+        console.error('Invalid Metal Price API response:', data);
         return this.getFallbackRates();
       }
 
