@@ -46,6 +46,23 @@ export class DatabaseStorage implements IStorage {
     if (existingProducts.length === 0) {
       await this.importCatalogProducts(this.getAuthenticMamdejProducts());
     }
+
+    // Initialize rates if not exists
+    const existingRates = await this.getRates();
+    if (existingRates.length === 0) {
+      await this.updateRate({
+        material: "gold",
+        rate: "6250",
+        change: "0",
+        updatedAt: new Date().toISOString()
+      });
+      await this.updateRate({
+        material: "silver",
+        rate: "75",
+        change: "0",
+        updatedAt: new Date().toISOString()
+      });
+    }
   }
 
   // User operations
@@ -326,57 +343,139 @@ export class DatabaseStorage implements IStorage {
         pricePerGram: "6250.00",
         stock: 1
       },
-      {
-        name: "Fancy Short Poth 22K",
-        description: "Compact fancy poth perfect for everyday wear - authentic Mamdej Jewellers design (95 items in collection)",
-        category: "fancy-poth",
-        subcategory: "short",
-        weight: "18.0",
-        purity: "22K Gold",
-        material: "gold",
-        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OWdfiidbZKp60dP2XVG.jpg",
-        featured: 0,
-        pricePerGram: "6250.00",
-        stock: 1
-      },
-      {
-        name: "Fancy Long Poth 22K",
-        description: "Extended fancy poth with elaborate design - authentic Mamdej Jewellers design (20 items in collection)",
-        category: "fancy-poth",
-        subcategory: "long",
-        weight: "35.5",
-        purity: "22K Gold",
-        material: "gold",
-        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-ONOL0qwaVXMLUzqWlfw.jpg",
-        featured: 0,
-        pricePerGram: "6250.00",
-        stock: 1
-      },
 
-      // CHOKER 22K - Authentic data from Mamdej website
+      // CHOKERS 22K - Based on catalog data
       {
-        name: "Temple Choker 22K",
-        description: "Sacred temple design choker necklace - authentic Mamdej Jewellers design (11 items in collection)",
-        category: "choker",
-        subcategory: "temple",
-        weight: "42.0",
+        name: "Temple Zumka 22K",
+        description: "Traditional temple design zumka earrings - authentic Mamdej Jewellers design (101 items in collection)",
+        category: "chokers",
+        subcategory: "temple-zumka",
+        weight: "8.5",
         purity: "22K Gold",
         material: "gold",
-        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSTu3vTuwmExEYADJ5v.jpg",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OW5ejw99m7hD4e0Jz0M.jpg",
         featured: 1,
         pricePerGram: "6250.00",
         stock: 1
       },
       {
-        name: "Yellow Choker 22K",
-        description: "Elegant yellow gold choker design - authentic Mamdej Jewellers design (2 items in collection)",
-        category: "choker",
-        subcategory: "yellow",
-        weight: "38.5",
+        name: "Temple Wati Set with Pendant 22K",
+        description: "Complete temple wati set with matching pendant - authentic Mamdej Jewellers design (124 items in collection)",
+        category: "chokers",
+        subcategory: "temple-set",
+        weight: "7.5",
         purity: "22K Gold",
         material: "gold",
-        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-NCAqzuGP6PqGYOBygBq.jpg",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSnmAkU55iDrFbyaxbZ.jpg",
+        featured: 1,
+        pricePerGram: "6250.00",
+        stock: 1
+      },
+      {
+        name: "Andhra Fancy Zumka 20K",
+        description: "Traditional Andhra style fancy zumka - authentic Mamdej Jewellers design (41 items in collection)",
+        category: "chokers",
+        subcategory: "andhra-fancy",
+        weight: "9.0",
+        purity: "20K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OKpwQIq_5CGaQ3F4H6v.jpg",
         featured: 0,
+        pricePerGram: "5800.00",
+        stock: 1
+      },
+      {
+        name: "Temple Har 22K",
+        description: "Magnificent temple design har necklace - authentic Mamdej Jewellers design (35 items in collection)",
+        category: "chokers",
+        subcategory: "temple-har",
+        weight: "45.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OWyAJ-WO2LCtuP_PC8j.jpg",
+        featured: 1,
+        pricePerGram: "6250.00",
+        stock: 1
+      },
+      {
+        name: "Rani Har 20K",
+        description: "Royal Rani har with traditional design - authentic Mamdej Jewellers design (45 items in collection)",
+        category: "chokers",
+        subcategory: "rani-har",
+        weight: "25.0",
+        purity: "20K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OX2gHBi-c8PH_eKizeX.jpg",
+        featured: 1,
+        pricePerGram: "5800.00",
+        stock: 1
+      },
+
+      // CHAINS - Based on catalog data
+      {
+        name: "Indo Chain 22K",
+        description: "Classic Indo chain design in 22K gold - authentic Mamdej Jewellers design (74 items in collection)",
+        category: "chains",
+        subcategory: "indo-chain",
+        weight: "15.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OW_jR7qlNROv8rXC-VE.jpg",
+        featured: 1,
+        pricePerGram: "6250.00",
+        stock: 1
+      },
+      {
+        name: "Choco Chain 22K",
+        description: "Elegant chocolate chain design - authentic Mamdej Jewellers design (16 items in collection)",
+        category: "chains",
+        subcategory: "choco-chain",
+        weight: "20.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-O1GwNMSoxDD4s0gZ1Ek.jpg",
+        featured: 1,
+        pricePerGram: "6250.00",
+        stock: 1
+      },
+
+      // BRACELETS - Based on catalog data
+      {
+        name: "Bracelet 22K",
+        description: "Traditional bracelet design in 22K gold - authentic Mamdej Jewellers design (61 items in collection)",
+        category: "bracelets",
+        subcategory: "traditional",
+        weight: "15.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OWylgbzWAxHuPRofqig.jpg",
+        featured: 1,
+        pricePerGram: "6250.00",
+        stock: 1
+      },
+      {
+        name: "Casting Bracelet 92",
+        description: "Precision cast bracelet with 92% purity - authentic Mamdej Jewellers design (27 items in collection)",
+        category: "bracelets",
+        subcategory: "casting",
+        weight: "12.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OMzy4jZsrIbIgMEGAxZ.jpg",
+        featured: 0,
+        pricePerGram: "6250.00",
+        stock: 1
+      },
+      {
+        name: "Gents Kada",
+        description: "Men's kada bracelet with traditional design - authentic Mamdej Jewellers design (60 items in collection)",
+        category: "bracelets",
+        subcategory: "gents-kada",
+        weight: "25.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OTGjePpx1q2stcDp4q6.jpg",
+        featured: 1,
         pricePerGram: "6250.00",
         stock: 1
       }

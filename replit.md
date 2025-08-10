@@ -5,6 +5,7 @@ This is a full-stack jewelry e-commerce website for "Shree Jewellers" built with
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+Data Source: Authentic Mamdej Jewellers catalog integration completed - using real product data from their official catalog URLs.
 
 # System Architecture
 
