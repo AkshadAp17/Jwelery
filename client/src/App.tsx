@@ -15,12 +15,10 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/necklaces" component={CategoryPage} />
-      <Route path="/haras" component={CategoryPage} />
-      <Route path="/mangalsutra" component={CategoryPage} />
-      <Route path="/rings" component={CategoryPage} />
-      <Route path="/earrings" component={CategoryPage} />
-      <Route path="/silver" component={CategoryPage} />
+      <Route path="/patta-poth" component={CategoryPage} />
+      <Route path="/necklace" component={CategoryPage} />
+      <Route path="/fancy-poth" component={CategoryPage} />
+      <Route path="/choker" component={CategoryPage} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/product/:id" component={ProductPage} />
       <Route path="/:category" component={CategoryPage} />

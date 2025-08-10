@@ -20,13 +20,10 @@ export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
 
   const categories = [
-    { name: t('nav.necklaces'), path: "/necklaces" },
-    { name: t('nav.haras'), path: "/haras" },
-    { name: t('nav.mangalsutra'), path: "/mangalsutra" },
-    { name: t('nav.rings'), path: "/rings" },
-    { name: t('nav.earrings'), path: "/earrings" },
-    { name: t('nav.bracelets'), path: "/bracelets" },
-    { name: t('nav.pooja-items'), path: "/pooja-items" },
+    { name: "Patta Poth 22K", path: "/patta-poth" },
+    { name: "Necklaces", path: "/necklace" },
+    { name: "Fancy Poth 22K", path: "/fancy-poth" },
+    { name: "Chokers 22K", path: "/choker" },
   ];
 
   return (

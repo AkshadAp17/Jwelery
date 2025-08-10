@@ -30,202 +30,195 @@ export class MemStorage implements IStorage {
   }
 
   private initializeData() {
-    // Initialize comprehensive Indian jewelry products
+    // Initialize Mamdej Jewellers catalog products
     const sampleProducts: InsertProduct[] = [
-      // Gold Necklaces
+      // PATTA POTH 22K - Long Poth
       {
-        name: "22K Gold Chain Necklace",
-        description: "Classic daily wear gold chain",
-        category: "necklaces",
-        subcategory: "chains",
-        weight: "15.5",
+        name: "Patti Long Poth 22K",
+        description: "Traditional long patta poth chain with intricate design",
+        category: "patta-poth",
+        subcategory: "long",
+        weight: "25.5",
         purity: "22K Gold",
         material: "gold",
-        imageUrl: "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OUANr2XivMO9ndCXNbm.jpg",
         featured: 1,
         pricePerGram: "6250.00"
       },
       {
-        name: "Antique Gold Choker",
-        description: "Traditional South Indian design",
-        category: "necklaces",
-        subcategory: "chokers",
-        weight: "35.0",
-        purity: "22K Gold",
-        material: "gold",
-        region: "South Indian",
-        imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1,
-        pricePerGram: "6250.00"
-      },
-      
-      // Mangalsutra Types
-      {
-        name: "Maharashtrian Mangalsutra",
-        description: "Traditional black beads with gold pendant",
-        category: "mangalsutra",
-        subcategory: "maharashtrian",
+        name: "Patti Short Poth 22K",
+        description: "Elegant short patta poth design for daily wear",
+        category: "patta-poth",
+        subcategory: "short",
         weight: "18.5",
         purity: "22K Gold",
         material: "gold",
-        region: "Maharashtrian",
-        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OV32_LA01WVd3tBQeGh.jpg",
         featured: 1,
-        pricePerGram: "6250.00"
-      },
-      {
-        name: "Andhra Style Mangalsutra",
-        description: "Long chain with traditional motifs",
-        category: "mangalsutra",
-        subcategory: "andhra",
-        weight: "25.0",
-        purity: "22K Gold",
-        material: "gold",
-        region: "Andhra",
-        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 0,
-        pricePerGram: "6250.00"
-      },
-      {
-        name: "Rajasthani Mangalsutra",
-        description: "Ornate design with Kundan work",
-        category: "mangalsutra",
-        subcategory: "rajasthani",
-        weight: "22.0",
-        purity: "22K Gold",
-        material: "gold",
-        region: "Rajasthani",
-        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 0,
         pricePerGram: "6250.00"
       },
       
-      // Gold Rings
+      // NECKLACE 20K
       {
-        name: "Gold Wedding Ring",
-        description: "Simple elegant band for daily wear",
-        category: "rings",
-        subcategory: "wedding",
-        weight: "8.5",
-        purity: "18K Gold",
-        material: "gold",
-        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1,
-        pricePerGram: "5200.00"
-      },
-      {
-        name: "Gold Signet Ring",
-        description: "Traditional men's signet ring",
-        category: "rings",
-        subcategory: "signet",
-        weight: "12.0",
+        name: "Fancy Necklace 20K",
+        description: "Beautiful fancy design necklace in 20K gold",
+        category: "necklace",
+        subcategory: "fancy-20k",
+        weight: "35.0",
         purity: "20K Gold",
         material: "gold",
-        imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OWBDQnKvRuKIs0Etcej.jpg",
+        featured: 1,
+        pricePerGram: "5800.00"
+      },
+      {
+        name: "Classic Necklace 20K",
+        description: "Traditional necklace design in 20K gold",
+        category: "necklace",
+        subcategory: "classic-20k",
+        weight: "28.0",
+        purity: "20K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OX2f1Q8G8EwGZNZny2p.jpg",
+        featured: 0,
+        pricePerGram: "5800.00"
+      },
+      {
+        name: "Arbi Necklace 20K",
+        description: "Arabic style necklace with unique patterns",
+        category: "necklace",
+        subcategory: "arbi-20k",
+        weight: "22.0",
+        purity: "20K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OL9cg9hfPV1a3MTjZJx.jpg",
         featured: 0,
         pricePerGram: "5800.00"
       },
       
-      // Gold Earrings
+      // NECKLACE 22K
       {
-        name: "Gold Jhumka Earrings",
-        description: "Traditional bell-shaped earrings",
-        category: "earrings",
-        subcategory: "jhumkas",
-        weight: "12.0",
+        name: "Temple Necklace 22K",
+        description: "Sacred temple design necklace in 22K gold",
+        category: "necklace",
+        subcategory: "temple-22k",
+        weight: "45.0",
         purity: "22K Gold",
         material: "gold",
-        imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OQbGrKDYWOMt4I1P3_D.jpg",
         featured: 1,
         pricePerGram: "6250.00"
       },
       {
-        name: "Gold Chandbali Earrings",
-        description: "Crescent moon shaped traditional earrings",
-        category: "earrings",
-        subcategory: "chandbali",
-        weight: "15.5",
+        name: "Fancy Necklace 22K",
+        description: "Elegant fancy design necklace in 22K gold",
+        category: "necklace",
+        subcategory: "fancy-22k",
+        weight: "38.5",
         purity: "22K Gold",
         material: "gold",
-        imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OUyR7FLxj9OG89qpI94.jpg",
+        featured: 1,
+        pricePerGram: "6250.00"
+      },
+      {
+        name: "Classic Necklace 22K",
+        description: "Traditional necklace design in premium 22K gold",
+        category: "necklace",
+        subcategory: "classic-22k",
+        weight: "32.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSEuuQBC0n-PhssMD0l.jpg",
         featured: 0,
         pricePerGram: "6250.00"
       },
       
-      // Silver Items
+      // FANCY POTH 22K
       {
-        name: "Silver Pooja Thali",
-        description: "Pure silver plate for religious ceremonies",
-        category: "pooja-items",
-        subcategory: "plates",
-        weight: "250.0",
-        purity: "999 Silver",
-        material: "silver",
-        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1,
-        pricePerGram: "85.00"
-      },
-      {
-        name: "Silver Deepak (Diya)",
-        description: "Traditional oil lamp for festivals",
-        category: "pooja-items",
-        subcategory: "deepak",
-        weight: "85.0",
-        purity: "925 Silver",
-        material: "silver",
-        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1,
-        pricePerGram: "82.00"
-      },
-      {
-        name: "Silver Water Glass Set",
-        description: "Set of 6 pure silver drinking glasses",
-        category: "pooja-items",
-        subcategory: "glasses",
-        weight: "180.0",
-        purity: "999 Silver",
-        material: "silver",
-        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 0,
-        pricePerGram: "85.00"
-      },
-      {
-        name: "Silver Ganesha Idol",
-        description: "Lord Ganesha statue for home temple",
-        category: "pooja-items",
-        subcategory: "idols",
-        weight: "125.0",
-        purity: "925 Silver",
-        material: "silver",
-        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 1,
-        pricePerGram: "82.00"
-      },
-      {
-        name: "Silver Bracelet",
-        description: "Elegant daily wear silver bracelet",
-        category: "bracelets",
-        subcategory: "bangles",
-        weight: "25.0",
-        purity: "925 Silver",
-        material: "silver",
-        imageUrl: "https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
-        featured: 0,
-        pricePerGram: "82.00"
-      },
-      
-      // Haras
-      {
-        name: "Royal Heritage Haar",
-        description: "Traditional long necklace with intricate work",
-        category: "haras",
-        subcategory: "long-haar",
-        weight: "45.5",
+        name: "Fancy Poth With Pendant 22K",
+        description: "Beautiful fancy poth with matching pendant",
+        category: "fancy-poth",
+        subcategory: "with-pendant",
+        weight: "28.5",
         purity: "22K Gold",
         material: "gold",
-        region: "Rajasthani",
-        imageUrl: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OPf3ddUzrqvAEstCTE7.jpg",
         featured: 1,
+        pricePerGram: "6250.00"
+      },
+      {
+        name: "Cartier Poth 22K",
+        description: "Luxurious Cartier style poth design",
+        category: "fancy-poth",
+        subcategory: "cartier",
+        weight: "24.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OMb7WhA0ZOs6XLtn3sG.jpg",
+        featured: 1,
+        pricePerGram: "6250.00"
+      },
+      {
+        name: "Fancy Nano Poth 22K",
+        description: "Delicate nano poth with intricate work",
+        category: "fancy-poth",
+        subcategory: "nano",
+        weight: "12.5",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OUUKkBSet-GR50FMdkv.jpg",
+        featured: 0,
+        pricePerGram: "6250.00"
+      },
+      {
+        name: "Fancy Short Poth 22K",
+        description: "Compact fancy poth perfect for everyday wear",
+        category: "fancy-poth",
+        subcategory: "short",
+        weight: "18.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OWdfiidbZKp60dP2XVG.jpg",
+        featured: 0,
+        pricePerGram: "6250.00"
+      },
+      {
+        name: "Fancy Long Poth 22K",
+        description: "Extended fancy poth with elaborate design",
+        category: "fancy-poth",
+        subcategory: "long",
+        weight: "35.5",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-ONOL0qwaVXMLUzqWlfw.jpg",
+        featured: 0,
+        pricePerGram: "6250.00"
+      },
+      
+      // CHOKER 22K
+      {
+        name: "Temple Choker 22K",
+        description: "Sacred temple design choker necklace",
+        category: "choker",
+        subcategory: "temple",
+        weight: "42.0",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSTu3vTuwmExEYADJ5v.jpg",
+        featured: 1,
+        pricePerGram: "6250.00"
+      },
+      {
+        name: "Yellow Choker 22K",
+        description: "Elegant yellow gold choker design",
+        category: "choker",
+        subcategory: "yellow",
+        weight: "38.5",
+        purity: "22K Gold",
+        material: "gold",
+        imageUrl: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-NCAqzuGP6PqGYOBygBq.jpg",
+        featured: 0,
         pricePerGram: "6250.00"
       }
     ];

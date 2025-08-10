@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack jewelry e-commerce website for "Shree Jewellers" built with React, Express, and PostgreSQL. The application showcases jewelry collections across multiple categories (necklaces, haras, mangalsutra, rings, earrings, bracelets), features live gold/silver rate displays, and provides a modern shopping experience with customer interaction tools like chat widgets and call buttons.
+This is a full-stack jewelry e-commerce website for "Shree Jewellers" built with React, Express, and PostgreSQL. The application showcases jewelry collections based on Mamdej Jewellers catalog across categories (Patta Poth 22K, Necklaces 20K/22K, Fancy Poth 22K, Chokers 22K), features live gold/silver rate displays, and provides a modern shopping experience with customer interaction tools like chat widgets and call buttons.
 
 # User Preferences
 

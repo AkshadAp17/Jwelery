@@ -3,52 +3,36 @@ import { Link } from "wouter";
 export default function CategoriesSection() {
   const categories = [
     {
+      name: "Patta Poth 22K",
+      path: "/patta-poth",
+      description: "Traditional Patta Poth Chains",
+      count: "78+ Designs",
+      image: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OUANr2XivMO9ndCXNbm.jpg",
+      subcategories: ["Long Poth", "Short Poth"]
+    },
+    {
       name: "Necklaces",
-      path: "/necklaces",
-      description: "Traditional & Contemporary",
-      count: "50+ Designs",
-      image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
-      subcategories: ["Chain Necklaces", "Pendant Sets", "Chokers", "Long Chains"]
+      path: "/necklace",
+      description: "20K & 22K Gold Collections",
+      count: "556+ Designs",
+      image: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OQbGrKDYWOMt4I1P3_D.jpg",
+      subcategories: ["Temple 22K", "Fancy 22K", "Classic 22K", "Fancy 20K", "Classic 20K", "Arbi 20K"]
     },
     {
-      name: "Haras",
-      path: "/haras",
-      description: "Royal Heritage Collection",
-      count: "25+ Designs",
-      image: "https://images.unsplash.com/photo-1611652022419-a9419f74343d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
-      subcategories: ["Kundan Haras", "Temple Haras", "Polki Haras", "Antique Haras"]
+      name: "Fancy Poth 22K",
+      path: "/fancy-poth",
+      description: "Premium Fancy Poth Collection",
+      count: "211+ Designs",
+      image: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OPf3ddUzrqvAEstCTE7.jpg",
+      subcategories: ["With Pendant", "Cartier Style", "Nano Poth", "Short Poth", "Long Poth"]
     },
     {
-      name: "Mangalsutra",
-      path: "/mangalsutra",
-      description: "Sacred & Beautiful",
-      count: "30+ Designs",
-      image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
-      subcategories: ["Andhra Style", "Maharashtrian Style", "Rajasthani Style", "Modern Style"]
-    },
-    {
-      name: "Rings",
-      path: "/rings",
-      description: "Engagement & Wedding",
-      count: "75+ Designs",
-      image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
-      subcategories: ["Wedding Rings", "Engagement Rings", "Daily Wear", "Statement Rings"]
-    },
-    {
-      name: "Earrings",
-      path: "/earrings",
-      description: "Studs & Chandeliers",
-      count: "60+ Designs",
-      image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
-      subcategories: ["Jhumkas", "Chandbali", "Studs", "Hoops", "Chandelier"]
-    },
-    {
-      name: "Silver Items",
-      path: "/silver",
-      description: "Puja & Gifting Items",
-      count: "40+ Items",
-      image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=300",
-      subcategories: ["Silver Plates", "Deepak/Diyas", "Glasses", "God Structures", "Gift Sets"]
+      name: "Chokers 22K",
+      path: "/choker",
+      description: "Elegant Choker Designs",
+      count: "13+ Designs",
+      image: "https://cdn.quicksell.co/-NC585SUXWbKdscLOlSO/products_400/-OSTu3vTuwmExEYADJ5v.jpg",
+      subcategories: ["Temple Choker", "Yellow Choker"]
     }
   ];
 
