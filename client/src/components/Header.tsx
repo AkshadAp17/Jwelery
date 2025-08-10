@@ -19,11 +19,43 @@ export default function Header() {
   const { t } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
 
-  const categories = [
-    { name: "Patta Poth 22K", path: "/patta-poth" },
-    { name: "Necklaces", path: "/necklace" },
-    { name: "Fancy Poth 22K", path: "/fancy-poth" },
-    { name: "Chokers 22K", path: "/choker" },
+  // Complete collections from authentic Mamdej Jewellers catalog
+  const collections = [
+    {
+      name: "Patta Poth Collection",
+      items: [
+        { name: "Long Poth 22K", path: "/category/patta-poth/long", count: "2 Designs" },
+        { name: "Short Poth 22K", path: "/category/patta-poth/short", count: "1 Design" }
+      ]
+    },
+    {
+      name: "Necklace Collection", 
+      items: [
+        { name: "Fancy 20K Gold", path: "/category/necklace/fancy-20k", count: "2 Designs" },
+        { name: "Temple 22K Gold", path: "/category/necklace/temple-22k", count: "1 Design" },
+        { name: "Fancy 22K Gold", path: "/category/necklace/fancy-22k", count: "1 Design" },
+        { name: "Classic 20K Gold", path: "/category/necklace/classic-20k", count: "1 Design" },
+        { name: "Classic 22K Gold", path: "/category/necklace/classic-22k", count: "1 Design" },
+        { name: "Arbi 20K Gold", path: "/category/necklace/arbi-20k", count: "1 Design" }
+      ]
+    },
+    {
+      name: "Fancy Poth Collection",
+      items: [
+        { name: "With Pendant", path: "/category/fancy-poth/with-pendant", count: "1 Design" },
+        { name: "Cartier Style", path: "/category/fancy-poth/cartier", count: "1 Design" },
+        { name: "Nano Poth", path: "/category/fancy-poth/nano", count: "1 Design" },
+        { name: "Short Poth", path: "/category/fancy-poth/short", count: "1 Design" },
+        { name: "Long Poth", path: "/category/fancy-poth/long", count: "1 Design" }
+      ]
+    },
+    {
+      name: "Choker Collection",
+      items: [
+        { name: "Temple Choker 22K", path: "/category/choker/temple", count: "1 Design" },
+        { name: "Yellow Choker", path: "/category/choker/yellow", count: "1 Design" }
+      ]
+    }
   ];
 
   return (
