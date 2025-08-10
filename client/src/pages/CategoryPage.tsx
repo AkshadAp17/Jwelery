@@ -42,7 +42,7 @@ export default function CategoryPage() {
     enabled: !!category && !!selectedSubcategory,
   });
 
-  const currentProducts: any[] = selectedSubcategory ? subcategoryProducts : products;
+  const currentProducts: any[] = selectedSubcategory ? (subcategoryProducts as any[]) : (products as any[]);
   const filteredProducts = materialFilter === "all" 
     ? currentProducts 
     : currentProducts.filter((p: any) => p.material === materialFilter);

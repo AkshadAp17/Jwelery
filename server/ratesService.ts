@@ -1,4 +1,4 @@
-// Real-time rates service that fetches from multiple Indian market sources
+// Real-time rates service that fetches from Metal Price API
 interface RateResponse {
   material: string;
   rate: number;
@@ -6,59 +6,133 @@ interface RateResponse {
   updatedAt: string;
 }
 
+interface MetalPriceApiResponse {
+  success: boolean;
+  timestamp: number;
+  base: string;
+  date: string;
+  rates: {
+    EUR?: number;
+    XAU?: number; // Gold in troy ounces
+    XAG?: number; // Silver in troy ounces
+  };
+}
+
 class RatesService {
-  private baseRates = {
+  private apiKey = process.env.METAL_PRICE_API_KEY;
+  private apiUrl = 'https://api.metalpriceapi.com/v1/latest';
+  private cache: { data: RateResponse[]; timestamp: number } | null = null;
+  private cacheTimeout = 5 * 60 * 1000; // 5 minutes cache
+  
+  // Fallback rates in case API fails
+  private fallbackRates = {
     gold: 6250.00, // Base 24K gold rate per gram in INR
     silver: 82.00   // Base silver rate per gram in INR
   };
 
-  // Simulate real market fluctuations based on Indian market patterns
-  private generateRealisticRate(baseRate: number, material: 'gold' | 'silver'): { rate: number; change: number } {
-    const now = new Date();
-    const hour = now.getHours();
-    
-    // Market hours simulation (Indian market is more volatile during trading hours)
-    const isMarketHours = hour >= 9 && hour <= 15;
-    const volatilityMultiplier = isMarketHours ? 1.5 : 0.5;
-    
-    // Gold tends to be more volatile than silver
-    const maxChangePercent = material === 'gold' ? 0.008 : 0.012; // 0.8% for gold, 1.2% for silver
-    
-    const changePercent = (Math.random() - 0.5) * 2 * maxChangePercent * volatilityMultiplier;
-    const change = baseRate * changePercent;
-    const newRate = baseRate + change;
-    
-    // Add some trending patterns (gold often moves opposite to market sentiment)
-    const trendAdjustment = material === 'gold' ? 
-      Math.sin(Date.now() / 1000000) * 10 : // Slower trend for gold
-      Math.cos(Date.now() / 800000) * 3;    // Faster trend for silver
-    
-    return {
-      rate: Math.max(newRate + trendAdjustment, baseRate * 0.95), // Don't go below 95% of base
-      change: change + trendAdjustment
-    };
+  // USD to INR exchange rate (approximate, will be updated from API)
+  private usdToInr = 83.50;
+
+  private async fetchFromApi(): Promise<RateResponse[]> {
+    try {
+      if (!this.apiKey) {
+        console.warn('METAL_PRICE_API_KEY not found, using fallback rates');
+        return this.getFallbackRates();
+      }
+
+      const url = `${this.apiUrl}?api_key=${this.apiKey}&base=USD&currencies=XAU,XAG`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.error(`Metal Price API error: ${response.status}`);
+        return this.getFallbackRates();
+      }
+
+      const data: MetalPriceApiResponse = await response.json();
+      
+      if (!data.success || !data.rates.XAU || !data.rates.XAG) {
+        console.error('Invalid Metal Price API response');
+        return this.getFallbackRates();
+      }
+
+      // Convert from troy ounces to grams and USD to INR
+      const goldPriceUsdPerOz = 1 / data.rates.XAU; // XAU is USD per troy ounce
+      const silverPriceUsdPerOz = 1 / data.rates.XAG; // XAG is USD per troy ounce
+      
+      // 1 troy ounce = 31.1035 grams
+      const goldPriceInrPerGram = (goldPriceUsdPerOz / 31.1035) * this.usdToInr;
+      const silverPriceInrPerGram = (silverPriceUsdPerOz / 31.1035) * this.usdToInr;
+
+      // Calculate change from previous cached rates
+      let goldChange = 0;
+      let silverChange = 0;
+      
+      if (this.cache?.data) {
+        const prevGold = this.cache.data.find(r => r.material === 'gold');
+        const prevSilver = this.cache.data.find(r => r.material === 'silver');
+        
+        if (prevGold) goldChange = goldPriceInrPerGram - prevGold.rate;
+        if (prevSilver) silverChange = silverPriceInrPerGram - prevSilver.rate;
+      }
+
+      const now = new Date().toISOString();
+      
+      return [
+        {
+          material: 'gold',
+          rate: goldPriceInrPerGram,
+          change: goldChange,
+          updatedAt: now
+        },
+        {
+          material: 'silver',
+          rate: silverPriceInrPerGram,
+          change: silverChange,
+          updatedAt: now
+        }
+      ];
+    } catch (error) {
+      console.error('Error fetching from Metal Price API:', error);
+      return this.getFallbackRates();
+    }
   }
 
-  async getCurrentRates(): Promise<RateResponse[]> {
-    const goldData = this.generateRealisticRate(this.baseRates.gold, 'gold');
-    const silverData = this.generateRealisticRate(this.baseRates.silver, 'silver');
-    
+  private getFallbackRates(): RateResponse[] {
     const now = new Date().toISOString();
-    
     return [
       {
         material: 'gold',
-        rate: goldData.rate,
-        change: goldData.change,
+        rate: this.fallbackRates.gold,
+        change: 0,
         updatedAt: now
       },
       {
         material: 'silver',
-        rate: silverData.rate,
-        change: silverData.change,
+        rate: this.fallbackRates.silver,
+        change: 0,
         updatedAt: now
       }
     ];
+  }
+
+  async getCurrentRates(): Promise<RateResponse[]> {
+    const now = Date.now();
+    
+    // Return cached data if still valid
+    if (this.cache && (now - this.cache.timestamp) < this.cacheTimeout) {
+      return this.cache.data;
+    }
+
+    // Fetch fresh data
+    const rates = await this.fetchFromApi();
+    
+    // Update cache
+    this.cache = {
+      data: rates,
+      timestamp: now
+    };
+
+    return rates;
   }
 
   // Get rate for specific purity
