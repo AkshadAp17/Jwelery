@@ -122,18 +122,26 @@ export default function Header() {
                 <Button variant="ghost" className="text-navy hover:text-gold transition-colors font-medium">
                   {t('nav.collections')} <i className="fas fa-chevron-down ml-1"></i>
                 </Button>
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  {categories.map((category) => (
-                    <Link key={category.path} href={category.path}>
-                      <button 
-                        className={`block w-full text-left px-4 py-2 text-gray-700 hover:bg-gold hover:text-white transition-colors ${
-                          location === category.path ? "bg-gold text-white" : ""
-                        }`}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {category.name}
-                      </button>
-                    </Link>
+                <div className="absolute top-full left-0 mt-2 w-80 bg-white shadow-xl rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  {collections.map((collection) => (
+                    <div key={collection.name} className="px-4 py-2">
+                      <h4 className="font-semibold text-navy text-sm mb-2">{collection.name}</h4>
+                      <div className="space-y-1">
+                        {collection.items.map((item) => (
+                          <Link key={item.path} href={item.path}>
+                            <button 
+                              className={`block w-full text-left px-2 py-1 text-xs text-gray-600 hover:bg-gold hover:text-white transition-colors rounded ${
+                                location === item.path ? "bg-gold text-white" : ""
+                              }`}
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <span className="block">{item.name}</span>
+                              <span className="text-xs opacity-75">{item.count}</span>
+                            </button>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -231,16 +239,24 @@ export default function Header() {
                     
                     <div className="space-y-2">
                       <h3 className="font-semibold text-navy mb-3">Collections</h3>
-                      {categories.map((category) => (
-                        <Link key={category.path} href={category.path}>
-                          <Button 
-                            variant="ghost" 
-                            className="justify-start w-full pl-4"
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            {category.name}
-                          </Button>
-                        </Link>
+                      {collections.map((collection) => (
+                        <div key={collection.name} className="space-y-1">
+                          <h4 className="font-medium text-navy text-sm px-2">{collection.name}</h4>
+                          {collection.items.map((item) => (
+                            <Link key={item.path} href={item.path}>
+                              <Button 
+                                variant="ghost" 
+                                className="justify-start w-full pl-6 text-xs"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <div>
+                                  <div>{item.name}</div>
+                                  <div className="text-xs text-gray-500">{item.count}</div>
+                                </div>
+                              </Button>
+                            </Link>
+                          ))}
+                        </div>
                       ))}
                     </div>
                     

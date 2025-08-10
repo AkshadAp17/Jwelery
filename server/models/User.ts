@@ -4,6 +4,7 @@ import { User } from '@shared/mongoSchema';
 
 const userSchema = new mongoose.Schema<User>({
   id: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   firstName: { type: String },
