@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { loginSchema, type LoginSchema } from "@shared/schema";
+import { loginSchema } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
 
-type LoginSchema = {
+type LoginFormData = {
   username: string;
   password: string;
 };
@@ -20,7 +20,7 @@ export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  const form = useForm<LoginSchema>({
+  const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",
@@ -29,8 +29,12 @@ export default function AdminLogin() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: async (data: LoginSchema) => {
-      return await apiRequest("/api/auth/login", "POST", data);
+    mutationFn: async (data: LoginFormData) => {
+      const response = await apiRequest("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      return await response.json();
     },
     onSuccess: (data) => {
       if (data.user.role === "admin") {
@@ -57,7 +61,7 @@ export default function AdminLogin() {
     },
   });
 
-  const onSubmit = (data: LoginSchema) => {
+  const onSubmit = (data: LoginFormData) => {
     loginMutation.mutate(data);
   };
 

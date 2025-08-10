@@ -24,9 +24,9 @@ Data Source: Authentic Mamdej Jewellers catalog integration completed - using re
 - **Development Setup**: Hot module replacement with Vite integration for seamless development experience
 
 ## Database Design
-- **Database**: MongoDB with Mongoose ODM for flexible document-based storage
+- **Database**: PostgreSQL with Drizzle ORM for robust relational data storage
 - **Schema**: Enhanced entities - users (with roles), products (with image management), categories, and rates
-- **Image Storage**: Cloudinary integration for optimized image upload and delivery
+- **Migration**: Successfully migrated from MongoDB to PostgreSQL for Replit compatibility
 - **Validation**: Zod schemas for runtime type checking and API validation
 - **Authentication**: JWT-based user authentication with role-based access control
 
