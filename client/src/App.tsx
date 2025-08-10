@@ -17,6 +17,8 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/category/:category/:subcategory" component={CategoryPage} />
+      <Route path="/category/:category" component={CategoryPage} />
       <Route path="/patta-poth" component={CategoryPage} />
       <Route path="/necklace" component={CategoryPage} />
       <Route path="/fancy-poth" component={CategoryPage} />
@@ -24,7 +26,6 @@ function Router() {
       <Route path="/admin" component={AdminLogin} />
       <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route path="/products" component={Products} />
-      <Route path="/category/:category" component={CategoryPage} />
       <Route path="/product/:id" component={ProductPage} />
       <Route path="/:category" component={CategoryPage} />
       <Route component={NotFound} />

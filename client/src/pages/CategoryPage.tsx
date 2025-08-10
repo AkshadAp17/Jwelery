@@ -24,31 +24,50 @@ const categoryNames: Record<string, string> = {
 };
 
 export default function CategoryPage() {
-  const { category } = useParams<{ category: string }>();
+  const { category, subcategory } = useParams<{ category: string; subcategory?: string }>();
   const { t } = useLanguage();
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string>("");
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>(subcategory || "");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [materialFilter, setMaterialFilter] = useState<"all" | "gold" | "silver">("all");
 
-  // Fetch products for category
+  // Fetch products for category only
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["/api/products/category", category],
-    enabled: !!category && !selectedSubcategory,
+    enabled: !!category && !subcategory && !selectedSubcategory,
   });
 
-  // Fetch products for subcategory  
+  // Fetch products for subcategory (from URL or selected)
+  const currentSubcategory = subcategory || selectedSubcategory;
   const { data: subcategoryProducts = [], isLoading: isSubcategoryLoading } = useQuery({
-    queryKey: ["/api/products/category", category, selectedSubcategory],
-    enabled: !!category && !!selectedSubcategory,
+    queryKey: ["/api/products/category", category, currentSubcategory],
+    enabled: !!category && !!currentSubcategory,
   });
 
-  const currentProducts: any[] = selectedSubcategory ? (subcategoryProducts as any[]) : (products as any[]);
+  const currentProducts: any[] = currentSubcategory ? (subcategoryProducts as any[]) : (products as any[]);
   const filteredProducts = materialFilter === "all" 
     ? currentProducts 
     : currentProducts.filter((p: any) => p.material === materialFilter);
 
   const subcategories = category ? categorySubcategories[category] || [] : [];
   const categoryName = category ? categoryNames[category] || category : "";
+  
+  // Show collection name for subcategory pages
+  const getPageTitle = () => {
+    if (subcategory) {
+      const subcategoryTitles: Record<string, string> = {
+        "long": "Long Poth Collection",
+        "short": "Short Poth Collection", 
+        "fancy-20k": "Fancy Necklace 20K Collection",
+        "temple-22k": "Temple Necklace 22K Collection",
+        "fancy-22k": "Fancy Necklace 22K Collection",
+        "with-pendant": "Fancy Poth With Pendant Collection",
+        "cartier": "Cartier Poth 22K Collection",
+        "temple": "Temple Choker 22K Collection"
+      };
+      return subcategoryTitles[subcategory] || `${subcategory} Collection`;
+    }
+    return categoryName;
+  };
 
   const handleSubcategoryClick = (subcategory: string) => {
     if (selectedSubcategory === subcategory) {
@@ -96,15 +115,20 @@ export default function CategoryPage() {
 
         {/* Page Header */}
         <div className="text-center mb-12">
-          <h1 className="font-playfair text-4xl font-bold text-navy mb-4 capitalize">
-            {selectedSubcategory || categoryName}
+          <h1 className="font-playfair text-4xl font-bold text-navy mb-4">
+            {getPageTitle()}
           </h1>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            {selectedSubcategory 
-              ? `Discover our exquisite ${selectedSubcategory} collection` 
+            {subcategory || selectedSubcategory
+              ? `Discover our authentic Mamdej Jewellers ${subcategory || selectedSubcategory} collection with traditional craftsmanship` 
               : `Explore our beautiful ${categoryName} collection with traditional and contemporary designs`
             }
           </p>
+          <div className="mt-4">
+            <Badge variant="secondary" className="bg-gold text-white">
+              {filteredProducts.length} Authentic Designs Available
+            </Badge>
+          </div>
         </div>
 
         {/* Subcategory Filter */}
